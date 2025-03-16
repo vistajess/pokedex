@@ -14,28 +14,34 @@ import { of } from "rxjs";
  */
 export interface PokemonStateModel {
   /** The list of pokemon with pagination information */
-  pokemonList: PokemonListResponse | null;
+  pokemonResponseList: PokemonListResponse | null;
   /** Currently selected pokemon with detailed information */
   selectedPokemon: Pokemon | null;
   /** Flag indicating if a request is in progress */
-  loading: boolean;
+  isLoading: boolean;
   /** Error message if any request fails */
   error: string | null;
+  offset: number;
+  limit: number;
+  hasMorePokemon: boolean;
 }
 
 
 @State<PokemonStateModel>({
   name: 'pokemon',
   defaults: {
-    pokemonList: null,
+    pokemonResponseList: null,
     selectedPokemon: null,
-    loading: false,
-    error: null
+    isLoading: false,
+    error: null,
+    offset: 0,
+    limit: 20,
+    hasMorePokemon: true
   }
 })
 @Injectable()
 export class PokemonState {
-  constructor(private pokemonService: PokemonService) {}
+  constructor(private pokemonService: PokemonService) { }
 
   /**
    * Selects and transforms the pokemon list from the state
@@ -44,7 +50,7 @@ export class PokemonState {
    */
   @Selector()
   static getPokemonList(state: PokemonStateModel) {
-    return state.pokemonList?.results
+    return state.pokemonResponseList?.results
       .map((pokemon: NamedAPIResource) => {
         return {
           ...pokemon,
@@ -71,7 +77,22 @@ export class PokemonState {
    */
   @Selector()
   static isLoading(state: PokemonStateModel) {
-    return state.loading;
+    return state.isLoading;
+  }
+
+  @Selector()
+  static getOffset(state: PokemonStateModel): number {
+    return state.offset;
+  }
+
+  @Selector()
+  static getLimit(state: PokemonStateModel): number {
+    return state.limit;
+  }
+
+  @Selector()
+  static hasMorePokemon(state: PokemonStateModel): boolean {
+    return state.hasMorePokemon;
   }
 
   /**
@@ -91,25 +112,45 @@ export class PokemonState {
    * @returns Observable that completes when the pokemon list is fetched
    */
   @Action(FetchPokemonList)
-  fetchPokemonList(ctx: StateContext<PokemonStateModel>, action: FetchPokemonList) {
+  fetchPokemonList(ctx: StateContext<PokemonStateModel>, { payload }: FetchPokemonList) {
     const state = ctx.getState();
+
+    // Don't fetch if already loading or no more Pokémon
+    if (state.isLoading || !state.hasMorePokemon) {
+      console.log('Not fetching more Pokémon: already loading or no more Pokémon');
+      return;
+    }
+
     ctx.patchState({
-      loading: true,
+      isLoading: true,
       error: null
     });
 
-    return this.pokemonService.getPokemonList(action.limit, action.offset).pipe(
+    return this.pokemonService.getPokemonList(payload.limit, payload.offset).pipe(
       tap(response => {
-        console.log(response);
-        ctx.patchState({
-          pokemonList: response,
-          loading: false
+        // console.log(response);
+        // ctx.patchState({
+        //   pokemonList: response,
+        //   isLoading: false
+        // });
+        const currentList = state.pokemonResponseList?.results || [];
+        const newList = [...currentList, ...response.results];
+
+        ctx.patchState({  
+          pokemonResponseList: {
+            ...response,
+            results: newList
+          },
+          offset: state.offset + payload.limit,
+          isLoading: false,
+          hasMorePokemon: response.results.length > 0
         });
       }),
       catchError(error => {
+        console.error('Error fetching Pokemon list:', error);
         ctx.patchState({
           error: error.message,
-          loading: false
+          isLoading: false
         });
         return of(error);
       })
@@ -123,24 +164,24 @@ export class PokemonState {
    * @returns Observable that completes when the pokemon details are fetched
    */
   @Action(FetchPokemonDetails)
-  fetchPokemonDetails(ctx: StateContext<PokemonStateModel>, action: FetchPokemonDetails) {
+  fetchPokemonDetails(ctx: StateContext<PokemonStateModel>, { payload }: FetchPokemonDetails) {
     const state = ctx.getState();
     ctx.patchState({
-      loading: true,
+      isLoading: true,
       error: null
     });
 
-    return this.pokemonService.getPokemonDetails(action.nameOrId).pipe(
+    return this.pokemonService.getPokemonDetails(payload.nameOrId).pipe(
       tap(pokemon => {
         ctx.patchState({
           selectedPokemon: pokemon,
-          loading: false
+          isLoading: false
         });
       }),
       catchError(error => {
         ctx.patchState({
           error: error.message,
-          loading: false
+          isLoading: false
         });
         return of(error);
       })

@@ -1,10 +1,12 @@
-import { Injectable } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import { PokemonListResponse } from "../types";
 import { from, map, Observable } from "rxjs";
 import { Pokemon } from "src/app/core/types";
 import { HttpClient } from "@angular/common/http";
 import { POKEMON_API } from '../constants/api.constants';
 import { QueryClientService } from "src/app/core/query/query-client.service";
+import { POKEMON_QUERY_CLIENT, QUERY_CLIENT_SERVICE } from "src/app/core/query/query-client.token";
+import { QueryClient } from "@tanstack/query-core";
 
 /**
  * Service for making HTTP requests to the Pokemon API
@@ -23,7 +25,7 @@ export class PokemonService {
    */
   constructor(
     private http: HttpClient,
-    private queryClientService: QueryClientService
+    @Inject(POKEMON_QUERY_CLIENT) private queryClient: QueryClient
   ) { }
 
   /**
@@ -34,7 +36,7 @@ export class PokemonService {
    */
   getPokemonList(limit: number = 20, offset: number = 0): Observable<PokemonListResponse> {
     return from(
-      this.queryClientService.queryClient.fetchQuery({
+      this.queryClient.fetchQuery({
         queryKey: ['pokemonList', offset, limit],
         queryFn: () => this.http.get<any>(`${this.baseUrl}${POKEMON_API.ENDPOINTS.POKEMON}?limit=${limit}&offset=${offset}`).toPromise(),
       })
