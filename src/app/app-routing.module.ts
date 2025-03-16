@@ -5,17 +5,20 @@ const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'home',
+    redirectTo: 'pokemon',
   },
   {
-    path: 'home',
+    path: 'pokemon',
     loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule)
   },
   {
     path: 'login',
     loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule)
   },
-
+  {
+    path: '**',
+    redirectTo: 'pokemon'
+  }
 ];
 @NgModule({
   imports: [
