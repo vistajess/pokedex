@@ -1,12 +1,12 @@
 // Actions
 export class FetchPokemonList {
   static readonly type = '[Pokemon] Fetch Pokemon List';
-  constructor(public limit: number = 20, public offset: number = 0) { }
+  constructor(public payload: { limit: number, offset: number }) { }
 }
 
 export class FetchPokemonDetails {
   static readonly type = '[Pokemon] Fetch Pokemon Details';
-  constructor(public nameOrId: string | number) { }
+  constructor(public payload: { nameOrId: string }) { }
 }
 
 /**

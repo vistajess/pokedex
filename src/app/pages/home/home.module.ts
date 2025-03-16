@@ -4,6 +4,7 @@ import { LayoutModule } from 'src/app/layout/layout.module';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @NgModule({
   declarations: [
@@ -13,7 +14,8 @@ import { HomeComponent } from './home.component';
     CommonModule,
     HomeRoutingModule,
     SharedModule,
-    LayoutModule
+    LayoutModule,
+    ScrollingModule
   ]
 })
 export class HomeModule { } 
