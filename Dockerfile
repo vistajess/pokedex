@@ -22,5 +22,5 @@ COPY . .
 # For development server
 EXPOSE 4200
 
-# Command to run the development server
-CMD ["ng", "serve", "--host", "0.0.0.0", "--disable-host-check"]
+# Command to run the development server with polling enabled
+CMD ["ng", "serve", "--host", "0.0.0.0", "--poll=2000", "--disable-host-check"]

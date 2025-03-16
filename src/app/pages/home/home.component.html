@@ -1,13 +1,15 @@
 <app-header></app-header>
 <div class="main-container">
-  <app-sidebar></app-sidebar> 
+  <app-sidebar></app-sidebar>
 
   <main class="content">
-    <div class="card">Card 1</div>
-    <div class="card">Card 2</div>
-    <div class="card">Card 3</div>
-    <div class="card">Card 4</div>
-    <div class="card">Card 5</div>
-    <div class="card">Card 6</div>
+
+    <div *ngIf="loading$ | async">Loading...</div>
+    <div *ngIf="error$ | async as error" class="error">{{ error }}</div>
+
+    <div class="card" *ngFor="let pokemon of pokemons$ | async">
+      {{ pokemon | json }}
+      {{ pokemon.name }} - {{ pokemon.number }}
+    </div>
   </main>
 </div>
