@@ -10,6 +10,7 @@
     <div class="card" *ngFor="let pokemon of pokemons$ | async">
       {{ pokemon | json }}
       {{ pokemon.name }} - {{ pokemon.number }}
+      <a [routerLink]="['/pokemon', pokemon.number]">View Details</a>
     </div>
   </main>
 </div>
