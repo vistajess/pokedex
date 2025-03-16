@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from '../app/shared/guard/auth-guard.service';
+import { AuthGuard } from './core/guard/auth-guard.service';
 const routes: Routes = [
   {
     path: '',
@@ -8,12 +8,12 @@ const routes: Routes = [
     redirectTo: 'pokemon',
   },
   {
-    path: 'pokemon',
+    path: '',
     loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule)
   },
   {
-    path: 'login',
-    loadChildren: () => import('./pages/login/login.module').then(m => m.LoginModule)
+    path: 'pokemon/:id',
+    loadChildren: () => import('./pages/detail/detail.module').then(m => m.DetailModule)
   },
   {
     path: '**',

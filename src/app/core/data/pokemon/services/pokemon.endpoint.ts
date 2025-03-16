@@ -1,9 +1,10 @@
 import { Injectable } from "@angular/core";
 import { PokemonListResponse } from "../types";
-import { Observable } from "rxjs";
+import { from, map, Observable } from "rxjs";
 import { Pokemon } from "src/app/core/types";
 import { HttpClient } from "@angular/common/http";
 import { POKEMON_API } from '../constants/api.constants';
+import { QueryClientService } from "src/app/core/query/query-client.service";
 
 /**
  * Service for making HTTP requests to the Pokemon API
@@ -12,6 +13,7 @@ import { POKEMON_API } from '../constants/api.constants';
   providedIn: 'root'
 })
 export class PokemonService {
+
   /** Base URL for the Pokemon API */
   private baseUrl = POKEMON_API.BASE_URL;
 
@@ -19,7 +21,10 @@ export class PokemonService {
    * Creates an instance of PokemonService
    * @param http - The HttpClient for making API requests
    */
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private queryClientService: QueryClientService
+  ) { }
 
   /**
    * Fetches a paginated list of Pokemon
@@ -28,8 +33,11 @@ export class PokemonService {
    * @returns An Observable of PokemonListResponse containing the paginated results
    */
   getPokemonList(limit: number = 20, offset: number = 0): Observable<PokemonListResponse> {
-    return this.http.get<PokemonListResponse>(
-      `${this.baseUrl}${POKEMON_API.ENDPOINTS.POKEMON}?limit=${limit}&offset=${offset}`
+    return from(
+      this.queryClientService.queryClient.fetchQuery({
+        queryKey: ['pokemonList', offset, limit],
+        queryFn: () => this.http.get<any>(`${this.baseUrl}${POKEMON_API.ENDPOINTS.POKEMON}?limit=${limit}&offset=${offset}`).toPromise(),
+      })
     );
   }
 
