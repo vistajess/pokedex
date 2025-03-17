@@ -1,12 +1,23 @@
+import { PokemonDetail } from "src/app/core/types";
+
 // Actions
 export class FetchPokemonList {
   static readonly type = '[Pokemon] Fetch Pokemon List';
   constructor(public payload: { limit: number, offset: number }) { }
 }
+export class FetchPokemonDetail {
+  static readonly type = '[Pokemon] Fetch Pokemon Detail';
+  constructor(public payload: { id: string }) {}
+}
 
-export class FetchPokemonDetails {
-  static readonly type = '[Pokemon] Fetch Pokemon Details';
-  constructor(public payload: { nameOrId: string }) { }
+export class FetchPokemonDetailSuccess {
+  static readonly type = '[Pokemon] Fetch Pokemon Detail Success';
+  constructor(public payload: { detail: PokemonDetail }) {}
+}
+
+export class FetchPokemonDetailFail {
+  static readonly type = '[Pokemon] Fetch Pokemon Detail Fail';
+  constructor(public payload: { error: any }) {}
 }
 
 /**

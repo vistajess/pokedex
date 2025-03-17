@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@angular/core";
 import { PokemonListResponse } from "../types";
 import { from, map, Observable } from "rxjs";
-import { Pokemon } from "src/app/core/types";
+import { Pokemon, PokemonDetail } from "src/app/core/types";
 import { HttpClient } from "@angular/common/http";
 import { POKEMON_API } from '../constants/api.constants';
 import { QueryClientService } from "src/app/core/query/query-client.service";
@@ -38,7 +38,14 @@ export class PokemonService {
     return from(
       this.queryClient.fetchQuery({
         queryKey: ['pokemonList', offset, limit],
-        queryFn: () => this.http.get<any>(`${this.baseUrl}${POKEMON_API.ENDPOINTS.POKEMON}?limit=${limit}&offset=${offset}`).toPromise(),
+        queryFn: () => this.http.get<PokemonListResponse>(`${this.baseUrl}${POKEMON_API.ENDPOINTS.POKEMON}?limit=${limit}&offset=${offset}`).toPromise(),
+      })
+    ).pipe(
+      map(response => {
+        if (!response) {
+          throw new Error(`Failed to fetch Pokemon list with offset ${offset} and limit ${limit}`);
+        }
+        return response as PokemonListResponse;
       })
     );
   }
@@ -48,8 +55,20 @@ export class PokemonService {
    * @param nameOrId - The name or ID of the Pokemon to fetch
    * @returns An Observable of Pokemon containing the detailed Pokemon data
    */
-  getPokemonDetails(nameOrId: string | number): Observable<Pokemon> {
-    return this.http.get<Pokemon>(`${this.baseUrl}/pokemon/${nameOrId}`);
+  getPokemonDetails(nameOrId: string | number): Observable<PokemonDetail> {
+    return from(
+      this.queryClient.fetchQuery({
+        queryKey: ['pokemonDetails', nameOrId],
+        queryFn: () => this.http.get<Pokemon>(`${this.baseUrl}${POKEMON_API.ENDPOINTS.POKEMON}/${nameOrId}`).toPromise(),
+      })
+    ).pipe(
+      map(pokemon => {
+        if (!pokemon) {
+          throw new Error(`Pokemon with id ${nameOrId} not found`);
+        }
+        return pokemon as PokemonDetail;
+      })
+    );
   }
 
   /**

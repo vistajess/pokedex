@@ -22,5 +22,8 @@ export interface PokemonSprites {
       front_default: string | null;
       front_shiny: string | null;
     };
+    showdown?: {
+      front_default: string | null;
+    };
   };
 }
