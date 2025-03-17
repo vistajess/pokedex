@@ -1,24 +1,31 @@
 <div *ngIf="pokemon" class="pokemon-card">
   <div class="card-header">
-    <button class="back-button">
-      <i class="arrow-left"></i>
-    </button>
-    <button class="favorite-button">
-      <i class="heart-icon"></i>
-    </button>
+
   </div>
-  
-  <div class="pokemon-image-container">
-    <img [src]="pokemon?.sprites?.other?.showdown?.front_default" [alt]="pokemon.name" class="pokemon-image" />
+
+  <div class="pokemon-image-container" [ngClass]="pokemon.types[0].type.name">
+    <div class='pokeball-bg'></div>
+    <img
+      [src]="pokemon?.sprites?.other?.showdown?.front_default"
+      [alt]="pokemon.name"
+      class="pokemon-image"
+    />
   </div>
-  
+
   <div class="card-content">
-    <h2 class="pokemon-name">{{ pokemon.name | titlecase }}</h2>
-    <p class="pokemon-number">N°{{ pokemon?.id?.toString()?.padStart(3, '0') }}</p>
-    
-    <div class="type-badges">
-      <span class="type-badge fire">Fogo</span>
-      <span class="type-badge flying">Voador</span>
+    <h2 class="pokemon-name">
+      {{ pokemon.name | titlecase }}
+      <span class="pokemon-number">
+        #{{ pokemon?.id }}
+      </span>
+    </h2>
+
+
+    <div class="types">
+      <div *ngFor="let type of pokemon.types" [ngClass]="type.type.name">
+        <img [src]="type | typeIcon" [alt]="pokemon.name" />
+        <span class="type-name">{{ type.type.name }}</span>
+      </div>
     </div>
   </div>
 </div>

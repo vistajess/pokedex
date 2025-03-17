@@ -1,1 +1,1 @@
-export const getTypeIconSrc = (type: string) => `./images/types-icons/${ type }.svg`;
+export const getTypeIconSrc = (type: string) => `assets/images/types-icons/${ type }.svg`;
