@@ -9,6 +9,7 @@
 @import "./scss/variables";
 @import "./scss/theme";
 @import "./scss/loader-spinner";
+@import "./scss/pokemon-types";
 
 * {
   box-sizing: border-box;
@@ -28,4 +29,18 @@ body {
   margin: 0;
   font-family: "Poppins", sans-serif;
   background-color: #f5f5f5;
+}
+
+.bg-image {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  background-image: url("assets/images/pokemon-background.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: repeat;
+  opacity: 0.4;
 }

@@ -1,36 +1,65 @@
 .header {
-  background-color: #333;
+  background-color: #e74c3c;
   color: white;
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  align-items: center;
+  justify-content: center;
 }
 
-.title {
-  text-align: center;
-  font-size: 24px;
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
 }
+
+.pokeball-logo {
+  height: 70px;
+  width: auto;
+}
+
+.pokedex-logo {
+}
+
+// Search Container
 
 .search-container {
+  position: relative;
+  width: 90%;
+  max-width: 600px;
   display: flex;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
+  border-radius: 50px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .search-input {
-  flex: 1;
-  padding: 10px;
+  flex-grow: 1;
+  padding: 15px 20px;
   border: none;
-  border-radius: 4px 0 0 4px;
+  font-size: 16px;
+  outline: none;
 }
 
 .search-button {
-  padding: 10px 20px;
-  background-color: #4CAF50;
-  color: white;
+  background-color: #000000;
   border: none;
-  border-radius: 0 4px 4px 0;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 67px;
+  height: 35px;
+  width: 35px;
+  position: absolute;
+  top: 7px;
+  right: 8px;
+}
+
+.search-icon {
+  width: 20px;
+  height: 20px;
 }

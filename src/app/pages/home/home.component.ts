@@ -15,15 +15,19 @@ import { Pokemon, PokemonDetail } from 'src/app/core/types';
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   pokemonHashMap: Map<string, Pokemon> = new Map<string, Pokemon>();
-  pokemonDetails$!: Observable<{[key: string]: PokemonDetail}>;
+
+  pokemonDetails$!: Observable<{ [key: string]: PokemonDetail }>;
 
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport;
-  
+
   pokemonList$: Observable<any[]>;
+
   isLoading$: Observable<boolean>;
+
   hasMorePokemon$: Observable<boolean>;
-  
+
   itemSize = 50; // Height of each item in pixels
+
   private destroy$ = new Subject<void>();
 
   constructor(private store: Store) {
@@ -32,17 +36,18 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     );
     this.isLoading$ = this.store.select(PokemonSelectors.isLoading);
     this.hasMorePokemon$ = this.store.select(PokemonSelectors.hasMorePokemon);
-
-    this.pokemonDetails$ = this.store.select(PokemonSelectors.getPokemonDetails) as Observable<{[key: string]: PokemonDetail}>;
+    this.pokemonDetails$ = this.store.select(PokemonSelectors.getPokemonDetails) as Observable<{ [key: string]: PokemonDetail }>;
   }
+
+  ///
+  /// life cycle
+  ///
 
   ngOnInit(): void {
     // Initial load
     this.loadPokemon();
-    
-    // Log state for debugging
+
     this.pokemonList$.subscribe(list => {
-      // console.log('Pokemon list updated:', list);
       list.forEach(pokemon => {
         this.pokemonHashMap.set(pokemon.name, pokemon);
         // Fetch details for each Pokemon
@@ -65,33 +70,47 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  ///
+  /// getter
+  ///
+
+  get pokemonHashMapToArray(): Pokemon[] {
+    return Array.from(this.pokemonHashMap.values());
+  }
+
+  ///
+  /// methods
+  ///
+
   setupScrollHandler() {
+    // ... existing code ...
     this.viewport.elementScrolled().pipe(
+      // Unsubscribe when component is destroyed
       takeUntil(this.destroy$),
+      // Limit scroll events to once per 200ms to improve performance
       throttleTime(200),
+      // Get the distance from the bottom of the viewport
       map(() => this.viewport.measureScrollOffset('bottom')),
+      // Compare current and previous bottom offset values
       pairwise(),
-      filter(([y1, y2]) => {
-        console.log(`Scroll position: ${y2}px from bottom`);
-        return y2 < 200 && y1 > y2;
-      })
+      // Only trigger when scrolling down and near the bottom (less than 200px from bottom)
+      filter(([y1, y2]) => y2 < 200 && y1 > y2)
     ).subscribe(() => {
-      console.log('Loading more Pokemon...');
+      // Load more Pokemon when user scrolls near the bottom
       this.loadMorePokemon();
     });
   }
 
   loadPokemon(): void {
     console.log('Attempting to load Pokemon');
-    
+
     const isLoading = this.store.selectSnapshot(PokemonSelectors.isLoading);
     const hasMore = this.store.selectSnapshot(PokemonSelectors.hasMorePokemon);
-    
+
     if (!isLoading && hasMore) {
       const offset = this.store.selectSnapshot(PokemonSelectors.getOffset);
       const limit = this.store.selectSnapshot(PokemonSelectors.getLimit);
       
-      console.log(`Dispatching FetchPokemonList with offset: ${offset}, limit: ${limit}`);
       this.store.dispatch(new FetchPokemonList({ offset, limit }));
     }
   }
@@ -104,8 +123,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!isLoading && hasMore) {
       const offset = this.store.selectSnapshot(PokemonSelectors.getOffset);
       const limit = this.store.selectSnapshot(PokemonSelectors.getLimit);
-      
-      console.log(`Loading more Pokemon with offset: ${offset}, limit: ${limit}`);
+
       this.store.dispatch(new FetchPokemonList({ offset, limit }));
     }
   }
@@ -118,14 +136,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   trackByIndex(index: number, item: any): number {
     return index;
   }
-  
-  get pokemonHashMapToArray(): Pokemon[] {
-    return Array.from(this.pokemonHashMap.values());
-  }
 
   fetchPokemonDetail(pokemon: Pokemon): void {
     const pokemonId = this.getPokemonId(pokemon.url);
-    
+
     // Check if we already have the details in the state
     const hasDetail = this.store.selectSnapshot(PokemonSelectors.getPokemonDetailByName)(pokemon.name);
     if (!hasDetail) {
@@ -140,8 +154,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       map(selectorFn => selectorFn(name) as PokemonDetail | undefined)
     );
   }
-  
-  // // Check if a Pokemon detail is currently loading
+
+  // Check if a Pokemon detail is currently loading
   isLoadingDetail(id: string): Observable<boolean> {
     return this.store.select(PokemonSelectors.isLoadingDetail).pipe(
       map(selectorFn => selectorFn(id))
