@@ -11,10 +11,11 @@ import { PokemonState } from './core/data/pokemon/store/pokemon-state';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { createDefaultQueryClient, createOtherQueryClient, createPokemonQueryClient } from './core/query/query-client.factory';
 import { DEFAULT_QUERY_CLIENT, OTHER_QUERY_CLIENT, POKEMON_QUERY_CLIENT } from './core/query/query-client.token';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     // Angular modules
@@ -25,6 +26,9 @@ import { DEFAULT_QUERY_CLIENT, OTHER_QUERY_CLIENT, POKEMON_QUERY_CLIENT } from '
     NgxsModule.forRoot([PokemonState], {
       developmentMode: !environment.production
     }),
+
+    // Material modules
+    MatSnackBarModule, // Used for displaying snackbar notifications basically for authentication errors
 
     // App routing module
     AppRoutingModule,

@@ -6,6 +6,11 @@ import { PokemonStat } from "./stat";
 import { PokemonType } from "./type";
 
 export interface Pokemon {
+  name: string;
+  url: string;
+}
+
+export interface PokemonDetail extends Pokemon {
   id: number;
   name: string;
   base_experience: number;

@@ -12,7 +12,7 @@ import { AuthenticationService } from '../auth/services/authentication.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthenticationService) { }
+  constructor(private authService: AuthenticationService, private snackBar: MatSnackBar) { }
 
   intercept(
     req: HttpRequest<any>,
@@ -42,7 +42,7 @@ export class AuthInterceptor implements HttpInterceptor {
           errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
         }
 
-        // this.snackBar.open(errorMessage, 'Close', { duration: 5000 });
+        this.snackBar.open(errorMessage, 'Close', { duration: 5000 });
         return throwError(() => new Error(errorMessage));
       })
     );

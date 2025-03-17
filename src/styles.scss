@@ -1,13 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 /* Import Poppins font */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
-@import '@angular/cdk/overlay-prebuilt.css';
+@import "@angular/cdk/overlay-prebuilt.css";
 
 @import "./scss/material";
 @import "./scss/utils";
 @import "./scss/responsive";
 @import "./scss/variables";
 @import "./scss/theme";
+@import "./scss/loader-spinner";
 
 * {
   box-sizing: border-box;
@@ -28,4 +29,3 @@ body {
   font-family: "Poppins", sans-serif;
   background-color: #f5f5f5;
 }
-
