@@ -8,6 +8,7 @@ import { PokemonType } from "./type";
 export interface Pokemon {
   name: string;
   url: string;
+  details?: PokemonDetail;
 }
 
 export interface PokemonDetail extends Pokemon {

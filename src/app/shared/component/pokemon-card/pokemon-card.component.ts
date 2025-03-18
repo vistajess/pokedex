@@ -11,28 +11,21 @@ import { getTypeIconSrc } from '../../helpers/image';
 })
 export class PokemonCardComponent implements OnInit {
 
+  constructor(private store: Store) { }
 
   ///
   /// input
   ///
-  @Input()
-  get identifier() { return this._identifier; }
-  set identifier(value: string) {
-    this._identifier = value;
-  }
-  private _identifier: string = '';
 
   @Input()
-  get pokemon() { return this._pokemon; }
-  set pokemon(value: PokemonDetail | null) {
+  get details() { return this._details; }
+  set details(value: PokemonDetail | null) {
     if (value) {
-      const pokemonDetail = this.store.selectSnapshot(PokemonSelectors.getPokemonDetailByName)(value?.name);
-      this._pokemon = pokemonDetail;
+      // const pokemonDetail = this.store.selectSnapshot(PokemonSelectors.getPokemonDetailByName)(value?.name);
+      this._details = value;
     }
   }
-  private _pokemon: PokemonDetail | null = null;
-
-  constructor(private store: Store) { }
+  private _details: PokemonDetail | null = null;
 
   ngOnInit(): void {
 
@@ -41,6 +34,6 @@ export class PokemonCardComponent implements OnInit {
   getTypeIconSrc = getTypeIconSrc
 
   get pokemonTypes() {
-    return this.pokemon?.types.map((type) => type.type.name);
+    return this.details?.types.map((type) => type.type.name);
   }
 }

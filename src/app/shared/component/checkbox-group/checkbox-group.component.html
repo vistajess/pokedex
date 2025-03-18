@@ -1,0 +1,17 @@
+<div class="checkbox-group">
+  <div class="checkbox-group-label" *ngIf="label">{{ label }}</div>
+  <div class="checkbox-group-options">
+    <div *ngFor="let option of options" class="checkbox-option">
+      <label class="checkbox-label">
+        <input
+          type="checkbox"
+          [id]="option.value"
+          [checked]="value.includes(option.value)"
+          (change)="onCheckboxChange($event, option.value)"
+        />
+        <span class="checkbox-custom"></span>
+        <span class="checkbox-text">{{ option.label }}</span>
+      </label>
+    </div>
+  </div>
+</div>

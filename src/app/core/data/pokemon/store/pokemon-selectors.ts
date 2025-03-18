@@ -1,22 +1,44 @@
-import { Selector } from '@ngxs/store';
+import { Selector, State } from '@ngxs/store';
 import { PokemonStateModel } from './pokemon-state-model';
-import { NamedAPIResource } from 'src/app/core/types';
+import { NamedAPIResource, Pokemon } from 'src/app/core/types';
 import { PokemonState } from './pokemon-state';
-
+import { Injectable } from '@angular/core';
+import { PokemonFilters } from '../types/pokemon-filters';
+@State<PokemonStateModel>({
+  name: 'pokemon'
+})
+@Injectable()
 export class PokemonSelectors {
   /**
    * Selects and transforms the pokemon list from the state
    */
-  @Selector([PokemonState])
-  static getPokemonList(state: PokemonStateModel) {
-    return state.pokemonResponseList?.results
-      .map((pokemon: NamedAPIResource) => {
-        return {
-          ...pokemon,
-          name: pokemon.name,
-          number: Number(pokemon.url.split("/").filter(Boolean).pop())
-        }
-      });
+
+
+  @Selector()
+  static pokemons(state: PokemonStateModel): Pokemon[] {
+    return state.pokemons || [];
+  }
+
+  @Selector()
+  static filteredPokemons(state: PokemonStateModel): Pokemon[] {
+    return state.filteredPokemons || [];
+  }
+
+  @Selector()
+  static visiblePokemons(state: PokemonStateModel) {
+    return state.filters && Object.values(state.filters).some(val => val)
+      ? state.filteredPokemons
+      : state.pokemons || [];
+  }
+
+  @Selector()
+  static filters(state: PokemonStateModel): PokemonFilters {
+    return state.filters || {};
+  }
+
+  @Selector()
+  static totalLoaded(state: PokemonStateModel): number {
+    return state.totalLoaded;
   }
 
   /**
@@ -43,16 +65,6 @@ export class PokemonSelectors {
   @Selector([PokemonState])
   static getLimit(state: PokemonStateModel): number {
     return state.limit;
-  }
-
-  @Selector([PokemonState])
-  static hasMorePokemon(state: PokemonStateModel): boolean {
-    return state.hasMorePokemon;
-  }
-
-  @Selector([PokemonState])
-  static getPokemonDetails(state: PokemonStateModel) {
-    return state.details;
   }
 
   @Selector([PokemonState])

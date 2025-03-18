@@ -2,9 +2,11 @@ import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, pairwise, takeUntil, throttleTime } from 'rxjs/operators';
+import { filter, map, pairwise, takeUntil, tap, throttleTime } from 'rxjs/operators';
+import { PokemonHelperService } from 'src/app/core/data/pokemon/helpers/services/pokemon-helper.service';
 import { PokemonSelectors } from 'src/app/core/data/pokemon/store';
-import { FetchPokemonDetail, FetchPokemonList } from 'src/app/core/data/pokemon/store/pokemon-actions';
+import { FetchFilteredPokemon, LoadPokemons, SetFilters } from 'src/app/core/data/pokemon/store/pokemon-actions';
+import { PokemonFilters } from 'src/app/core/data/pokemon/types/pokemon-filters';
 import { Pokemon, PokemonDetail } from 'src/app/core/types';
 
 @Component({
@@ -24,19 +26,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isLoading$: Observable<boolean>;
 
-  hasMorePokemon$: Observable<boolean>;
+  totalLoaded$: Observable<number>;
 
   itemSize = 50; // Height of each item in pixels
 
   private destroy$ = new Subject<void>();
 
-  constructor(private store: Store) {
-    this.pokemonList$ = this.store.select(PokemonSelectors.getPokemonList).pipe(
+  constructor(
+    private store: Store,
+    public pokemonHelperService: PokemonHelperService) {
+    this.pokemonList$ = this.store.select(PokemonSelectors.visiblePokemons).pipe(
       map(list => list || [])
     );
     this.isLoading$ = this.store.select(PokemonSelectors.isLoading);
-    this.hasMorePokemon$ = this.store.select(PokemonSelectors.hasMorePokemon);
-    this.pokemonDetails$ = this.store.select(PokemonSelectors.getPokemonDetails) as Observable<{ [key: string]: PokemonDetail }>;
+    this.totalLoaded$ = this.store.select(PokemonSelectors.totalLoaded)
+      .pipe(map((totalLoaded) => ((totalLoaded ?? 0) / 1000) * 100));
+
   }
 
   ///
@@ -44,16 +49,19 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ///
 
   ngOnInit(): void {
-    // Initial load
-    this.loadPokemon();
+    // Load pokemons
+    this.store.dispatch(new LoadPokemons({ batchSize: 200 }));
 
-    this.pokemonList$.subscribe(list => {
-      list.forEach(pokemon => {
-        this.pokemonHashMap.set(pokemon.name, pokemon);
-        // Fetch details for each Pokemon
-        this.fetchPokemonDetail(pokemon);
+    this.pokemonList$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(list => {
+        this.pokemonHashMap.clear();
+        if (list.length > 0) {
+          list.forEach(pokemon => {
+            this.pokemonHashMap.set(pokemon.name, pokemon);
+          });
+        }
       });
-    });
   }
 
   ngAfterViewInit() {
@@ -78,6 +86,18 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     return Array.from(this.pokemonHashMap.values());
   }
 
+  isLoadingDetail(id: string): Observable<boolean> {
+    return this.pokemonHelperService.isLoadingDetail(id);
+  }
+
+  getPokemonDetail(name: string): Observable<PokemonDetail | undefined> {
+    return this.pokemonHelperService.getPokemonDetail(name);
+  }
+
+  getPokemonId(url: string): string {
+    return this.pokemonHelperService.getPokemonId(url);
+  }
+
   ///
   /// methods
   ///
@@ -97,68 +117,34 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       filter(([y1, y2]) => y2 < 200 && y1 > y2)
     ).subscribe(() => {
       // Load more Pokemon when user scrolls near the bottom
-      this.loadMorePokemon();
+
     });
   }
 
   loadPokemon(): void {
-    console.log('Attempting to load Pokemon');
+    // console.log('Attempting to load Pokemon');
 
-    const isLoading = this.store.selectSnapshot(PokemonSelectors.isLoading);
-    const hasMore = this.store.selectSnapshot(PokemonSelectors.hasMorePokemon);
+    // const isLoading = this.store.selectSnapshot(PokemonSelectors.isLoading);
+    // const hasMore = this.store.selectSnapshot(PokemonSelectors.hasMorePokemon);
 
-    if (!isLoading && hasMore) {
-      const offset = this.store.selectSnapshot(PokemonSelectors.getOffset);
-      const limit = this.store.selectSnapshot(PokemonSelectors.getLimit);
-      
-      this.store.dispatch(new FetchPokemonList({ offset, limit }));
-    }
-  }
+    // if (!isLoading && hasMore) {
+    //   const offset = this.store.selectSnapshot(PokemonSelectors.getOffset);
+    //   const limit = this.store.selectSnapshot(PokemonSelectors.getLimit);
 
-  loadMorePokemon(): void {
-    const isLoading = this.store.selectSnapshot(PokemonSelectors.isLoading);
-    const hasMore = this.store.selectSnapshot(PokemonSelectors.hasMorePokemon);
-    console.log('isLoading', isLoading);
-    console.log('hasMore', hasMore);
-    if (!isLoading && hasMore) {
-      const offset = this.store.selectSnapshot(PokemonSelectors.getOffset);
-      const limit = this.store.selectSnapshot(PokemonSelectors.getLimit);
-
-      this.store.dispatch(new FetchPokemonList({ offset, limit }));
-    }
-  }
-
-  getPokemonId(url: string): string {
-    const parts = url.split('/');
-    return parts[parts.length - 2];
+    //   this.store.dispatch(new FetchPokemonList({ offset, limit }));
+    //   this.store.dispatch(new FetchFilteredPokemon({ limit, offset }));
+    // }
   }
 
   trackByIndex(index: number, item: any): number {
     return index;
   }
 
-  fetchPokemonDetail(pokemon: Pokemon): void {
-    const pokemonId = this.getPokemonId(pokemon.url);
-
-    // Check if we already have the details in the state
-    const hasDetail = this.store.selectSnapshot(PokemonSelectors.getPokemonDetailByName)(pokemon.name);
-    if (!hasDetail) {
-      // Dispatch action to fetch details
-      this.store.dispatch(new FetchPokemonDetail({ id: pokemonId }));
-    }
+  onFiltersChanged(filters: PokemonFilters): void {
+    this.store.dispatch(new SetFilters(filters));
   }
 
-  // Helper method to get Pokemon detail from state
-  getPokemonDetail(name: string): Observable<PokemonDetail | undefined> {
-    return this.store.select(PokemonSelectors.getPokemonDetailByName).pipe(
-      map(selectorFn => selectorFn(name) as PokemonDetail | undefined)
-    );
-  }
-
-  // Check if a Pokemon detail is currently loading
-  isLoadingDetail(id: string): Observable<boolean> {
-    return this.store.select(PokemonSelectors.isLoadingDetail).pipe(
-      map(selectorFn => selectorFn(id))
-    );
+  onSearchChanged(filters: PokemonFilters): void {
+    this.store.dispatch(new SetFilters(filters));
   }
 }

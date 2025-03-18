@@ -1,29 +1,29 @@
-<div *ngIf="pokemon" class="pokemon-card">
+<div *ngIf="details" class="pokemon-card">
   <div class="card-header">
 
   </div>
 
-  <div class="pokemon-image-container" [ngClass]="pokemon.types[0].type.name">
+  <div class="pokemon-image-container" [ngClass]="details.types[0].type.name">
     <div class='pokeball-bg'></div>
     <img
-      [src]="pokemon?.sprites?.other?.showdown?.front_default"
-      [alt]="pokemon.name"
-      class="pokemon-image"
+      [src]="details?.sprites?.other?.showdown?.front_default"
+      [alt]="details.name"
+      class="details-image"
     />
   </div>
 
   <div class="card-content">
     <h2 class="pokemon-name">
-      {{ pokemon.name | titlecase }}
+      {{ details.name | titlecase }}
       <span class="pokemon-number">
-        #{{ pokemon?.id }}
+        #{{ details?.id }}
       </span>
     </h2>
 
 
     <div class="types">
-      <div *ngFor="let type of pokemon.types" [ngClass]="type.type.name">
-        <img [src]="type | typeIcon" [alt]="pokemon.name" />
+      <div *ngFor="let type of details.types" [ngClass]="type.type.name">
+        <img [src]="type | typeIcon" [alt]="details.name" />
         <span class="type-name">{{ type.type.name }}</span>
       </div>
     </div>

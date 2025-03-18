@@ -1,0 +1,38 @@
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #6b46c1;
+  border-radius: 4px;
+  margin-right: 8px;
+  transition: all 0.2s ease;
+  
+  &.checked {
+    background-color: #6b46c1;
+    color: white;
+  }
+}
+
+.checkbox-label {
+  font-size: 14px;
+  user-select: none;
+}

@@ -5,3 +5,5 @@ export * from "./ability";
 export * from "./resource";
 export * from "./sprites";
 export * from "./move";
+export * from "./rarity";
+export * from "./species-detail";

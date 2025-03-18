@@ -1,0 +1,21 @@
+<div class="slider-container">
+  <div class="slider-track">
+    <div
+      class="slider-fill"
+      [style.width.%]="((value - min) / (max - min)) * 100"
+    ></div>
+    <input
+      type="range"
+      [value]="value"
+      (input)="onSliderChange($event)"
+      [min]="min"
+      [max]="max"
+      class="slider-input"
+    />
+  </div>
+  <div class="slider-labels">
+    <!-- <span class="slider-label">{{ min }}</span> -->
+    <span class="slider-label">{{ value }}</span>
+    <!-- <span class="slider-label">{{ max }}</span> -->
+  </div>
+</div>

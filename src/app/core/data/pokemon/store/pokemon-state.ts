@@ -1,11 +1,13 @@
 import { Injectable } from "@angular/core";
 import { Action, State, StateContext } from "@ngxs/store";
-import { of, throwError } from "rxjs";
-import { catchError, tap } from "rxjs/operators";
-import { PokemonDetail } from "src/app/core/types";
+import { forkJoin } from "rxjs";
+import { map } from "rxjs/operators";
+import { Pokemon } from "src/app/core/types";
+import { IndexedDBService } from "../helpers/services/indexed-db.service";
 import { PokemonService } from "../services";
-import { FetchPokemonDetail, FetchPokemonDetailFail, FetchPokemonDetailSuccess, FetchPokemonList } from "./pokemon-actions";
+import { ApplyFilters, LoadPokemons, SetFilters } from "./pokemon-actions";
 import { defaultPokemonState, PokemonStateModel } from "./pokemon-state-model";
+import { categorizeHeight } from "../helpers/pokemon-height";
 
 
 @State<PokemonStateModel>({
@@ -14,108 +16,84 @@ import { defaultPokemonState, PokemonStateModel } from "./pokemon-state-model";
 })
 @Injectable()
 export class PokemonState {
-  constructor(private pokemonService: PokemonService) { }
+  constructor(private pokemonService: PokemonService, private indexedDBService: IndexedDBService) { }
 
-  /**
-   * Fetches a paginated list of pokemon
-   * @param ctx The state context
-   * @param action The action containing limit and offset for pagination
-   * @returns Observable that completes when the pokemon list is fetched
-   */
-  @Action(FetchPokemonList)
-  fetchPokemonList(ctx: StateContext<PokemonStateModel>, { payload }: FetchPokemonList) {
-    const state = ctx.getState();
+  @Action(LoadPokemons)
+  async loadPokemons(ctx: StateContext<PokemonStateModel>, { payload }: LoadPokemons) {
+    const { batchSize } = payload;
+    const cachedData = await this.indexedDBService.get<Pokemon[]>('pokemonList');
+    const totalPokemons = 1000; // total pokemons to load
 
-    // Don't fetch if already loading or no more Pokémon
-    if (state.isLoading || !state.hasMorePokemon) {
-      console.log('Not fetching more Pokémon: already loading or no more Pokémon');
+    if (cachedData && cachedData.length >= totalPokemons) {
+      ctx.patchState({ pokemons: cachedData, totalLoaded: cachedData.length, isLoading: false });
       return;
     }
 
-    ctx.patchState({
-      isLoading: true,
-      error: null
-    });
+    const pokemonMap = new Map((cachedData || []).map((p: any) => [p.name, p]));
+    ctx.patchState({ isLoading: true });
 
-    return this.pokemonService.getPokemonList(payload.limit, payload.offset).pipe(
-      tap(response => {
-        const currentList = state.pokemonResponseList?.results || [];
-        const newList = [...currentList, ...response.results];
+    for (let offset = 0; offset < totalPokemons; offset += batchSize) {
+      const batch = await this.pokemonService.getPokemonList(batchSize, offset).toPromise();
 
-        ctx.patchState({  
-          pokemonResponseList: {
-            ...response,
-            results: newList
-          },
-          offset: state.offset + payload.limit,
-          isLoading: false,
-          hasMorePokemon: response.results.length > 0
-        });
-      }),
-      catchError(error => {
-        console.error('Error fetching Pokemon list:', error);
-        ctx.patchState({
-          error: error.message,
-          isLoading: false
-        });
-        return of(error);
-      })
-    );
-  }
+      const detailRequests = batch?.results.map((pokemon: Pokemon) =>
+        this.pokemonService.getPokemonDetails(pokemon.name).pipe(
+          map((details) => ({ ...pokemon, details }))
+        )
+      );
 
-  /**
-   * Fetches detailed information for a specific pokemon
-   * @param ctx The state context
-   * @param action The action containing the name or ID of the pokemon to fetch
-   * @returns Observable that completes when the pokemon details are fetched
-   */
-  @Action(FetchPokemonDetail)
-  fetchPokemonDetails(ctx: StateContext<PokemonStateModel>, { payload }: FetchPokemonDetail) {
-    const state = ctx.getState();
+      const batchWithDetails = await forkJoin(detailRequests || []).toPromise();
+      batchWithDetails?.forEach((pokemon: Pokemon) => pokemonMap.set(pokemon.name, pokemon));
 
-    if (state.loadingDetails.includes(payload.id)) {
-      console.log('Not fetching more Pokémon: already loading or no more Pokémon');
-      return;
+      const mergedData = Array.from(pokemonMap.values());
+      await this.indexedDBService.set('pokemonList', mergedData);
+
+      ctx.patchState({
+        pokemons: mergedData as Pokemon[],
+        totalLoaded: mergedData.length
+      });
+
+      await new Promise((resolve) => setTimeout(resolve, 3000)); // Delay for API-friendly batching
     }
 
-    ctx.patchState({
-      loadingDetails: [...state.loadingDetails, payload.id]
-    });
+    ctx.patchState({ isLoading: false });
 
-    return this.pokemonService.getPokemonDetails(payload.id).pipe(
-      tap((detail: PokemonDetail) => {
-        ctx.dispatch(new FetchPokemonDetailSuccess({ detail }));
-      }),
-      catchError(error => {
-        ctx.dispatch(new FetchPokemonDetailFail({ error }));
-        return throwError(() => error);
-      })
-    );
   }
 
-  @Action(FetchPokemonDetailSuccess)
-  fetchPokemonDetailSuccess(ctx: StateContext<PokemonStateModel>, action: FetchPokemonDetailSuccess) {
+
+  @Action(SetFilters)
+  setFilters(ctx: StateContext<PokemonStateModel>, { payload }: SetFilters) {
+    const { filters } = ctx.getState();
+    console.log('filters', { ...filters, ...payload } );
+    ctx.patchState({ filters: { ...filters, ...payload } });
+    ctx.dispatch(new ApplyFilters());
+  }
+
+  @Action(ApplyFilters)
+  applyFilters(ctx: StateContext<PokemonStateModel>) {
     const state = ctx.getState();
-    const { detail } = action.payload;
-    
-    ctx.patchState({
-      details: {
-        ...state.details,
-        [detail.name]: detail
-      },
-      loadingDetails: state.loadingDetails.filter(id => id !== detail.id.toString())
+    const { pokemons, filters } = state;
+
+    const filteredPokemons = pokemons.filter((pokemon) => {
+      const matchesType = filters.type ? pokemon.details?.types.some((t: any) => t.type.name === filters.type) : true;
+      // const matchesRarity = filters.rarity ? pokemon.details?.rarity === filters.rarity : true;
+      const matchesHeight = filters.heightCategory
+        ? filters.heightCategory.includes(categorizeHeight(pokemon.details?.height ?? 0))
+        : true;
+        if (pokemon.name  === 'clefairy') {
+          console.log('CLEFAIRYpokemon', pokemon.details?.height);
+          console.log(filters.heightCategory)
+          console.log(categorizeHeight(pokemon.details?.height ?? 0))
+        }
+      const matchesSearch = filters.search
+        ? pokemon.name.toLowerCase().includes(filters.search.toLowerCase())
+        : true;
+
+      return matchesType && matchesHeight && matchesSearch;
     });
+
+    console.log('filteredPokemons', filteredPokemons);
+
+    ctx.patchState({ filteredPokemons });
   }
 
-  @Action(FetchPokemonDetailFail)
-  fetchPokemonDetailFail(ctx: StateContext<PokemonStateModel>, action: FetchPokemonDetailFail) {
-    const state = ctx.getState();
-    const { error } = action.payload;
-    
-    ctx.patchState({
-      detailsError: error,
-      // We don't know which ID failed, so we can't remove it from loadingDetails
-      // In a real app, you might want to include the ID in the error payload
-    });
-  }
 }

@@ -1,19 +1,19 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SidebarComponent } from './sidebar/sidebar.component';
-import { HeaderComponent } from './header/header.component';
+import { NgModule } from '@angular/core';
+import { HeaderModule } from './header/header.module';
+import { SidebarModule } from './sidebar/sidebar.module';
 
 @NgModule({
   declarations: [
-    SidebarComponent,
-    HeaderComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    SidebarModule,
+    HeaderModule
   ],
   exports: [
-    SidebarComponent,
-    HeaderComponent
+    HeaderModule,
+    SidebarModule
   ]
 })
 export class LayoutModule { } 

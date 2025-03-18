@@ -1,12 +1,22 @@
-<app-header></app-header>
+<app-header (onSearchChanged)="onSearchChanged($event)"></app-header>
 <div class="main-container">
-  <app-sidebar></app-sidebar>
+  <app-sidebar (filtersChanged)="onFiltersChanged($event)"></app-sidebar>
 
   <div class="pokemon-list-container">
-    <ng-container *ngIf="pokemonList$ | async as pokemonListResult">
+    <div *ngIf="isLoading$ | async" class="progress-bar-container">
+      <div class="overlay"></div>
+      <div class="progress-bar-container-inner">
+        <circle-progress
+          [percent]="(totalLoaded$ | async)!"
+          [radius]="120"
+        ></circle-progress>
+      </div>
+    </div>
+    <ng-container *ngIf="pokemonList$ | async as pokemonList">
       <cdk-virtual-scroll-viewport
         [itemSize]="itemSize"
         class="virtual-grid-viewport"
+        *ngIf="pokemonList.length > 0"
       >
         <div class="virtual-grid-container">
           <div
@@ -16,63 +26,20 @@
             "
             class="pokemon-card virtual-grid-item"
           >
-            <ng-container
-              *ngIf="
-                getPokemonDetail(pokemon.name) | async as detail;
-                else loading
-              "
-            >
-              <!-- <a [routerLink]="['/pokemon', getPokemonId(pokemon.url)]"
-                >View Details</a
-              > -->
-              <pokemon-card
-                [identifier]="pokemon.name"
-                [pokemon]="pokemon"
-              ></pokemon-card>
-            </ng-container>
-
-            <ng-template #loading>
-              <div
-                *ngIf="
-                  isLoadingDetail(getPokemonId(pokemon.url)) | async;
-                  else notLoaded
-                "
-              >
-                <div class="loader-spinner">
-                  <div></div>
-                </div>
-              </div>
-              <ng-template #notLoaded>
-                <button (click)="fetchPokemonDetail(pokemon)">
-                  Load Details
-                </button>
-              </ng-template>
-            </ng-template>
+            <pokemon-card [details]="pokemon.details"></pokemon-card>
           </div>
         </div>
 
         <div class="loading-indicator" *ngIf="isLoading$ | async">
           <p>Loading more Pokémon...</p>
         </div>
-
-        <div
-          class="end-message"
-          *ngIf="
-            !(hasMorePokemon$ | async) &&
-            !(isLoading$ | async) &&
-            pokemonListResult.length > 0
-          "
-        >
-          <p>No more Pokémon to load!</p>
-        </div>
-
-        <div
-          *ngIf="pokemonListResult.length === 0 && !(isLoading$ | async)"
-          class="empty-state"
-        >
-          <p>No Pokémon found. Try refreshing the page.</p>
-        </div>
       </cdk-virtual-scroll-viewport>
     </ng-container>
+
+    <div class="no-results" *ngIf="(pokemonList$ | async)?.length === 0">
+      <img src="https://cdn-icons-png.flaticon.com/512/188/188993.png" alt="No Results" />
+      <h2>No Pokémon Found</h2>
+      <p>Try adjusting your filters or searching for another Pokémon.</p>
+    </div>
   </div>
 </div>
