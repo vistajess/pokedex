@@ -1,8 +1,7 @@
 .virtual-grid-viewport {
-  height: 80vh; /* or desired height */
+  height: 75vh;
   width: 100%;
   overflow: auto;
-  /* border: 1px solid #ddd; */
 }
 
 .virtual-grid-container {
@@ -13,7 +12,7 @@
 }
 
 .virtual-grid-item {
-  height: 280px; /* Must match itemSize */
+  height: 280px;
   display: flex;
   align-items: center;
   justify-content: center;

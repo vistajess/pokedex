@@ -1,0 +1,32 @@
+// Button Variables
+$btn-font-family: inherit !default;
+$btn-font-size: 1rem !default;
+$btn-font-weight: 500 !default;
+$btn-line-height: 1.5 !default;
+$btn-border-width: 1px !default;
+$btn-border-radius: 0.375rem !default;
+$btn-padding-y: 0.5rem !default;
+$btn-padding-x: 1rem !default;
+$btn-transition: all 0.2s ease-in-out !default;
+
+// Button Colors
+$btn-primary-bg: #6c47ff !default;
+$btn-primary-color: #ffffff !default;
+$btn-primary-border: $btn-primary-bg !default;
+$btn-primary-hover-bg: darken($btn-primary-bg, 10%) !default;
+$btn-primary-hover-color: $btn-primary-color !default;
+$btn-primary-hover-border: $btn-primary-hover-bg !default;
+
+$btn-secondary-bg: transparent !default;
+$btn-secondary-color: #6c47ff !default;
+$btn-secondary-border: #6c47ff !default;
+$btn-secondary-hover-bg: rgba(#6c47ff, 0.1) !default;
+$btn-secondary-hover-color: darken($btn-secondary-color, 10%) !default;
+$btn-secondary-hover-border: darken($btn-secondary-border, 10%) !default;
+
+$btn-tertiary-bg: transparent !default;
+$btn-tertiary-color: #6c47ff !default;
+$btn-tertiary-border: transparent !default;
+$btn-tertiary-hover-bg: transparent !default;
+$btn-tertiary-hover-color: darken($btn-tertiary-color, 10%) !default;
+$btn-tertiary-hover-border: transparent !default;

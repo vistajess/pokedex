@@ -1,0 +1,50 @@
+<div class="dropdown-container" [class.disabled]="isDisabled || disabled">
+  <!-- Dropdown trigger button -->
+  <div
+    class="dropdown-trigger"
+    [class.open]="isOpen"
+    (click)="toggleDropdown()"
+  >
+    <div class="dropdown-selected">
+      <span *ngIf="!value && placeholder" class="dropdown-placeholder">
+        <span *ngIf="!isDisabled && !disabled" class="status-dot"></span>
+        {{ placeholder }}
+      </span>
+      <span *ngIf="value" class="dropdown-value">
+        <span *ngIf="!isDisabled && !disabled" class="status-dot"></span>
+        {{ selectedLabel }}
+      </span>
+    </div>
+
+    <div class="dropdown-arrow" [class.open]="isOpen">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M7 10l5 5 5-5"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </div>
+  </div>
+
+  <!-- Dropdown options list -->
+  <div class="dropdown-options" *ngIf="isOpen">
+    <div
+      *ngFor="let option of options"
+      class="dropdown-option"
+      [class.selected]="isSelected(option)"
+      [class.disabled]="option.disabled"
+      (click)="selectOption(option)"
+    >
+      {{ option.label }}
+    </div>
+  </div>
+</div>
