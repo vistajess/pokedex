@@ -34,9 +34,27 @@ export class PokemonSelectors {
     return state.filters || {};
   }
 
+    /**
+   * Selects the loading state
+   */
+    @Selector([PokemonState])
+    static isLoading(state: PokemonStateModel) {
+      return state.isLoading;
+    }
+  
+    @Selector([PokemonState])
+    static isBatchLoading(state: PokemonStateModel) {
+      return state.isBatchLoading;
+    }
+
   @Selector()
   static totalLoaded(state: PokemonStateModel): number {
     return state.totalLoaded;
+  }
+
+  @Selector()
+  static isMaxPokemonsLoaded(state: PokemonStateModel): boolean {
+    return state.isMaxPokemonsLoaded;
   }
 
   /**
@@ -45,14 +63,6 @@ export class PokemonSelectors {
   @Selector([PokemonState])
   static getSelectedPokemon(state: PokemonStateModel) {
     return state.selectedPokemon;
-  }
-
-  /**
-   * Selects the loading state
-   */
-  @Selector([PokemonState])
-  static isLoading(state: PokemonStateModel) {
-    return state.isLoading;
   }
 
   @Selector([PokemonState])

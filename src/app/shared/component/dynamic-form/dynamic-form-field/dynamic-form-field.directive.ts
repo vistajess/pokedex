@@ -1,6 +1,7 @@
 import { ComponentRef, Directive, Input, OnChanges, OnDestroy, SimpleChanges, ViewContainerRef } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ComponentRegistryService } from '../../services/component-registry.service';
+import { ComponentRegistryService } from '../../../services/component-registry.service';
+import { Subject, takeUntil } from 'rxjs';
 
 export interface DynamicFieldConfig {
   name: string;
@@ -14,6 +15,8 @@ export interface DynamicFieldConfig {
   selector: '[appDynamicFormField]'
 })
 export class DynamicFormFieldDirective implements OnDestroy {
+
+  private destroy$ = new Subject<void>();
 
   @Input()
   get config() { return this._config; }
@@ -76,6 +79,13 @@ export class DynamicFormFieldDirective implements OnDestroy {
       instance.writeValue(this._control!.value);
       instance.registerOnChange((value: any) => this._control!.setValue(value));
       instance.registerOnTouched(() => this._control!.markAsTouched());
+      // Add value changes subscription
+      instance.formControl?.valueChanges.pipe(takeUntil(this.destroy$))
+        .subscribe((value: any) => {
+        if (this.instance) {
+          this.instance.writeValue(value);
+        }
+      });
     }
     this.componentRef.changeDetectorRef.detectChanges();
   }
@@ -84,5 +94,7 @@ export class DynamicFormFieldDirective implements OnDestroy {
     if (this.componentRef) {
       this.componentRef.destroy();
     }
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

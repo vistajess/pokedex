@@ -12,7 +12,7 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { createDefaultQueryClient, createOtherQueryClient, createPokemonQueryClient } from './core/query/query-client.factory';
 import { DEFAULT_QUERY_CLIENT, OTHER_QUERY_CLIENT, POKEMON_QUERY_CLIENT } from './core/query/query-client.token';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { DynamicFormFieldsModule } from './shared/modules/dynamic-form-fields.module';
+import { DynamicFormFieldsModule } from './shared/component/dynamic-form/dynamic-form-fields.module';
 @NgModule({
   declarations: [
     AppComponent,

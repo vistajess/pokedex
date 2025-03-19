@@ -5,9 +5,9 @@ import { CheckboxGroupModule } from 'src/app/shared/component/checkbox-group/che
 import { DropdownModule } from 'src/app/shared/component/dropdown/dropdown.module';
 import { SidebarFilterComponent } from './sidebar-filter.component';
 import { SliderModule } from 'src/app/shared/component/slider/slider.module';
-import { DynamicFormFieldDirective } from 'src/app/shared/directives/dynamic-form-field/dynamic-form-field.directive';
+import { DynamicFormFieldDirective } from 'src/app/shared/component/dynamic-form/dynamic-form-field/dynamic-form-field.directive';
 import { DynamicFormComponent } from 'src/app/shared/component/dynamic-form/dynamic-form.component';
-import { DynamicFormFieldsModule } from 'src/app/shared/modules/dynamic-form-fields.module';
+import { DynamicFormFieldsModule } from 'src/app/shared/component/dynamic-form/dynamic-form-fields.module';
 
 @NgModule({
   declarations: [

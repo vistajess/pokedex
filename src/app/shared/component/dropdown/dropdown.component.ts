@@ -25,7 +25,7 @@ export class DropdownComponent extends BaseFormFieldComponent implements Control
 
   @Input() options: DropdownOption[] = []; // List of dropdown options
 
-  @Input() placeholder: string = 'Open list'; // Placeholder text when no option is selected
+  @Input() placeholder: string = 'Select an option'; // Placeholder text when no option is selected
 
   @Input() required: boolean = false; // Indicates if the dropdown is required
 

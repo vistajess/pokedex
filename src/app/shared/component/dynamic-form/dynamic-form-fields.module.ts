@@ -3,14 +3,14 @@ import { ModuleWithProviders, NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 
 // Import form field components
-import { CheckboxGroupComponent } from '../component/checkbox-group/checkbox-group.component';
-import { CheckboxGroupModule } from '../component/checkbox-group/checkbox-group.module';
-import { DropdownComponent } from '../component/dropdown/dropdown.component';
-import { DropdownModule } from '../component/dropdown/dropdown.module';
-import { SliderNumberComponent } from '../component/slider/slider.component';
-import { SliderModule } from '../component/slider/slider.module';
-import { ComponentType } from '../helpers/component.helper';
-import { ComponentRegistryService } from '../services/component-registry.service';
+import { CheckboxGroupComponent } from '../checkbox-group/checkbox-group.component';
+import { CheckboxGroupModule } from '../checkbox-group/checkbox-group.module';
+import { DropdownComponent } from '../dropdown/dropdown.component';
+import { DropdownModule } from '../dropdown/dropdown.module';
+import { SliderNumberComponent } from '../slider/slider.component';
+import { SliderModule } from '../slider/slider.module';
+import { ComponentType } from '../../helpers/component.helper';
+import { ComponentRegistryService } from '../../services/component-registry.service';
 
 @NgModule({
   declarations: [

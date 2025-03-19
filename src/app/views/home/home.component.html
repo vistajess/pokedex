@@ -1,17 +1,36 @@
 <app-header (onSearchChanged)="onSearchChanged($event)"></app-header>
 <div class="main-container">
-  <app-sidebar-filter (filtersChanged)="onFiltersChanged($event)"></app-sidebar-filter>
+  <app-sidebar-filter
+    (filtersChanged)="onFiltersChanged($event)"
+  ></app-sidebar-filter>
 
   <div class="pokemon-list-container">
-    <div *ngIf="isLoading$ | async" class="progress-bar-container">
-      <div class="overlay"></div>
-      <div class="progress-bar-container-inner">
-        <circle-progress
-          [percent]="(totalLoaded$ | async)!"
-          [radius]="120"
-        ></circle-progress>
+    <ng-container *ngIf="isBatchLoading$ | async">
+      <div class="progress-bar-container">
+        <div class="overlay"></div>
+        <div class="progress-bar-container-inner">
+          <circle-progress
+            [radius]="120"
+            [percent]="(totalLoaded$ | async) ?? 0"
+            [subtitle]="((totalLoaded$ | async) ?? 0) + '%'"
+            subtitleFontSize="30"
+          >
+          </circle-progress>
+        </div>
       </div>
-    </div>
+    </ng-container>
+
+    <ng-container *ngIf="isLoading$ | async">
+      <div class="batch-loading-pokemon-container" *ngIf="(pokemonList$ | async)?.length === 0">
+        <div>
+          <div class="loader-spinner-container">
+            <div class="loader-spinner"></div>
+          </div>
+          <p>Please wait while we load the Pokémon...</p>
+        </div>
+      </div>
+    </ng-container>
+
     <ng-container *ngIf="pokemonList$ | async as pokemonList">
       <cdk-virtual-scroll-viewport
         [itemSize]="itemSize"
@@ -36,8 +55,11 @@
       </cdk-virtual-scroll-viewport>
     </ng-container>
 
-    <div class="no-results" *ngIf="(pokemonList$ | async)?.length === 0">
-      <img src="https://cdn-icons-png.flaticon.com/512/188/188993.png" alt="No Results" />
+    <div
+      class="no-results-container"
+      *ngIf="(pokemonList$ | async)?.length === 0 && (isLoading$ | async) === false"
+    >
+      <img src="assets/images/jigglypuff.png" alt="No Results" />
       <h2>No Pokémon Found</h2>
       <p>Try adjusting your filters or searching for another Pokémon.</p>
     </div>
