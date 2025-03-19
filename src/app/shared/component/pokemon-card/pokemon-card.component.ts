@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { PokemonSelectors } from 'src/app/core/data/pokemon';
 import { PokemonDetail } from 'src/app/core/types';
-import { getTypeIconSrc } from '../../helpers/image';
+import { getTypeIconSrc } from '../../helpers/image.helper';
 
 @Component({
   selector: 'pokemon-card',
@@ -21,7 +21,6 @@ export class PokemonCardComponent implements OnInit {
   get details() { return this._details; }
   set details(value: PokemonDetail | null) {
     if (value) {
-      // const pokemonDetail = this.store.selectSnapshot(PokemonSelectors.getPokemonDetailByName)(value?.name);
       this._details = value;
     }
   }

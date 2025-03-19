@@ -1,4 +1,3 @@
-import { PokemonTypeEnum } from "src/app/core/types";
 import { DropdownOption } from "../component/dropdown/dropdown.component";
 
 /**

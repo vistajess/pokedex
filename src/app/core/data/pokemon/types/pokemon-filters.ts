@@ -8,4 +8,10 @@ export interface PokemonFilters {
   rarity?: PokemonRarityEnum;
   heightCategory?: HeightCategory[];
   search?: string;
+  stats?: {
+    hp: number;
+    attack: number;
+    defense: number;
+    speed: number;
+  }
 }   

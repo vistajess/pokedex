@@ -94,82 +94,82 @@ export class PokemonService {
     );
   }
 
-  /**
-   * Fetches and filters Pokemon based on specified criteria including height category
-   * @param filters - Object containing filter criteria
-   * @param limit - Maximum number of Pokemon to check before filtering (default: 100)
-   * @returns Observable of filtered Pokemon details
-   */
-  getFilteredPokemon(
-    filters: PokemonFilters,
-    limit: number = 100
-  ): Observable<PokemonDetail[]> {
-    // First get the list of Pokemon
-    return this.getPokemonList(limit, 100, filters).pipe(
-      // Get the results array from the response
-      map(response => response.results),
-      // Map each Pokemon to its details observable
-      map(pokemonList => {
-        return pokemonList.map(pokemon => 
-          this.getPokemonDetails(pokemon.name)
-        );
-      }),
-      // Convert array of observables to single observable of array
-      switchMap(detailObservables => 
-        from(Promise.all(detailObservables.map(obs => 
-          new Promise<PokemonDetail>(resolve => {
-            obs.subscribe(detail => resolve(detail));
-          })
-        )))
-      ),
-      // Apply the filters to the Pokemon details
-      map(pokemonDetails => pokemonDetails.filter(async (pokemon) => {
-        // Apply type filter if specified
-        if (filters.type && !pokemon.types.some(t => 
-          t.type.name.toLowerCase() === filters.type?.toLowerCase())) {
-          return false;
-        }
+  // /**
+  //  * Fetches and filters Pokemon based on specified criteria including height category
+  //  * @param filters - Object containing filter criteria
+  //  * @param limit - Maximum number of Pokemon to check before filtering (default: 100)
+  //  * @returns Observable of filtered Pokemon details
+  //  */
+  // getFilteredPokemon(
+  //   filters: PokemonFilters,
+  //   limit: number = 100
+  // ): Observable<PokemonDetail[]> {
+  //   // First get the list of Pokemon
+  //   return this.getPokemonList(limit, 100, filters).pipe(
+  //     // Get the results array from the response
+  //     map(response => response.results),
+  //     // Map each Pokemon to its details observable
+  //     map(pokemonList => {
+  //       return pokemonList.map(pokemon => 
+  //         this.getPokemonDetails(pokemon.name)
+  //       );
+  //     }),
+  //     // Convert array of observables to single observable of array
+  //     switchMap(detailObservables => 
+  //       from(Promise.all(detailObservables.map(obs => 
+  //         new Promise<PokemonDetail>(resolve => {
+  //           obs.subscribe(detail => resolve(detail));
+  //         })
+  //       )))
+  //     ),
+  //     // Apply the filters to the Pokemon details
+  //     map(pokemonDetails => pokemonDetails.filter(async (pokemon) => {
+  //       // Apply type filter if specified
+  //       if (filters.type && !pokemon.types.some(t => 
+  //         t.type.name.toLowerCase() === filters.type?.toLowerCase())) {
+  //         return false;
+  //       }
         
-        // Apply height category filter if specified
-        if (filters.heightCategory && 
-            !filters.heightCategory.includes(categorizeHeight(pokemon.height))) {
-          return false;
-        }
+  //       // Apply height category filter if specified
+  //       if (filters.heightCategory && 
+  //           !filters.heightCategory.includes(categorizeHeight(pokemon.height))) {
+  //         return false;
+  //       }
         
-        // Apply rarity filter if specified
-        if (filters.rarity) {
-          const speciesDetails = await this.getPokemonSpeciesDetails(pokemon.id).toPromise();
-          // const encounterLocations = await this.getPokemonEncounterLocations(pokemon.id).toPromise();
+  //       // Apply rarity filter if specified
+  //       if (filters.rarity) {
+  //         const speciesDetails = await this.getPokemonSpeciesDetails(pokemon.id).toPromise();
+  //         // const encounterLocations = await this.getPokemonEncounterLocations(pokemon.id).toPromise();
 
-          const isLegendary = speciesDetails?.is_legendary;
-          const isMythical = speciesDetails?.is_mythical;
-          const baseExperience = pokemon.base_experience;
-          // const encounterLocationCount = encounterLocations.length;
+  //         const isLegendary = speciesDetails?.is_legendary;
+  //         const isMythical = speciesDetails?.is_mythical;
+  //         const baseExperience = pokemon.base_experience;
+  //         // const encounterLocationCount = encounterLocations.length;
 
-          switch (filters.rarity) {
-            case PokemonRarityEnum.COMMON:
-              if (baseExperience < 100) return true;
-              break;
-            case PokemonRarityEnum.UNCOMMON:
-              if (baseExperience >= 100 && baseExperience < 200) return true;
-              break;
-            case PokemonRarityEnum.RARE:
-              if (baseExperience >= 200) return true;
-              break;
-            case PokemonRarityEnum.LEGENDARY:
-              if (isLegendary) return true;
-              break;
-            case PokemonRarityEnum.MYTHICAL:
-              if (isMythical) return true;
-              break;
-          }
+  //         switch (filters.rarity) {
+  //           case PokemonRarityEnum.COMMON:
+  //             if (baseExperience < 100) return true;
+  //             break;
+  //           case PokemonRarityEnum.UNCOMMON:
+  //             if (baseExperience >= 100 && baseExperience < 200) return true;
+  //             break;
+  //           case PokemonRarityEnum.RARE:
+  //             if (baseExperience >= 200) return true;
+  //             break;
+  //           case PokemonRarityEnum.LEGENDARY:
+  //             if (isLegendary) return true;
+  //             break;
+  //           case PokemonRarityEnum.MYTHICAL:
+  //             if (isMythical) return true;
+  //             break;
+  //         }
 
-          return false;
-        }
-        return true;
-      }))
-    );
-  }
+  //         return false;
+  //       }
+  //       return true;
+  //     }))
+  //   );
+  // }
 
   getPokemonSpeciesDetails(id: number): Observable<PokemonSpeciesDetail> {
     return this.http.get<PokemonSpeciesDetail>(`${this.baseUrl}/pokemon-species/${id}`);

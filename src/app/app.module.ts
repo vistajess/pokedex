@@ -12,6 +12,7 @@ import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { createDefaultQueryClient, createOtherQueryClient, createPokemonQueryClient } from './core/query/query-client.factory';
 import { DEFAULT_QUERY_CLIENT, OTHER_QUERY_CLIENT, POKEMON_QUERY_CLIENT } from './core/query/query-client.token';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { DynamicFormFieldsModule } from './shared/modules/dynamic-form-fields.module';
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,6 +29,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 
     // Material modules
     MatSnackBarModule, // Used for displaying snackbar notifications basically for authentication errors
+    DynamicFormFieldsModule.forRoot(), // Used for dynamic form fields
 
     // App routing module
     AppRoutingModule,

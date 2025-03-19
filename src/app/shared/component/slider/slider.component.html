@@ -1,8 +1,16 @@
+
 <div class="slider-container">
+  <div class="slider-label">
+    {{ label }}
+  </div>
   <div class="slider-track">
     <div
       class="slider-fill"
       [style.width.%]="((value - min) / (max - min)) * 100"
+    ></div>
+    <div
+      class="slider-handle"
+      [style.left.%]="((value - min) / (max - min)) * 100"
     ></div>
     <input
       type="range"

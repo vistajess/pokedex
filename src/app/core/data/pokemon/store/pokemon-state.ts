@@ -2,12 +2,13 @@ import { Injectable } from "@angular/core";
 import { Action, State, StateContext } from "@ngxs/store";
 import { forkJoin } from "rxjs";
 import { map } from "rxjs/operators";
-import { Pokemon } from "src/app/core/types";
+import { Pokemon, PokemonStatEnum } from "src/app/core/types";
 import { IndexedDBService } from "../helpers/services/indexed-db.service";
 import { PokemonService } from "../services";
 import { ApplyFilters, LoadPokemons, SetFilters } from "./pokemon-actions";
 import { defaultPokemonState, PokemonStateModel } from "./pokemon-state-model";
 import { categorizeHeight } from "../helpers/pokemon-height";
+import { hasValue } from "src/app/shared/helpers/object.helper";
 
 
 @State<PokemonStateModel>({
@@ -18,6 +19,12 @@ import { categorizeHeight } from "../helpers/pokemon-height";
 export class PokemonState {
   constructor(private pokemonService: PokemonService, private indexedDBService: IndexedDBService) { }
 
+  /**
+ * Loads a batch of pokemons from the API and caches them in IndexedDB.
+ * If the pokemons are already cached, it loads them from the cache instead.
+ * @param ctx The state context
+ * @param payload The action payload containing the batch size
+ */
   @Action(LoadPokemons)
   async loadPokemons(ctx: StateContext<PokemonStateModel>, { payload }: LoadPokemons) {
     const { batchSize } = payload;
@@ -59,39 +66,64 @@ export class PokemonState {
 
   }
 
-
+  /**
+   * Sets the filters in the state.
+   * @param ctx The state context
+   * @param payload The action payload containing the filters to set
+   */
   @Action(SetFilters)
   setFilters(ctx: StateContext<PokemonStateModel>, { payload }: SetFilters) {
     const { filters } = ctx.getState();
-    console.log('filters', { ...filters, ...payload } );
     ctx.patchState({ filters: { ...filters, ...payload } });
     ctx.dispatch(new ApplyFilters());
   }
 
+  /**
+   * Applies the filters to the pokemons in the state.
+   * @param ctx The state context
+   */
   @Action(ApplyFilters)
   applyFilters(ctx: StateContext<PokemonStateModel>) {
     const state = ctx.getState();
     const { pokemons, filters } = state;
 
-    const filteredPokemons = pokemons.filter((pokemon) => {
+    const filteredPokemons = pokemons.filter((pokemon: Pokemon) => {
       const matchesType = filters.type ? pokemon.details?.types.some((t: any) => t.type.name === filters.type) : true;
-      // const matchesRarity = filters.rarity ? pokemon.details?.rarity === filters.rarity : true;
+
+      // check the height category
       const matchesHeight = filters.heightCategory
         ? filters.heightCategory.includes(categorizeHeight(pokemon.details?.height ?? 0))
         : true;
-        if (pokemon.name  === 'clefairy') {
-          console.log('CLEFAIRYpokemon', pokemon.details?.height);
-          console.log(filters.heightCategory)
-          console.log(categorizeHeight(pokemon.details?.height ?? 0))
-        }
+
+      // check the search
       const matchesSearch = filters.search
         ? pokemon.name.toLowerCase().includes(filters.search.toLowerCase())
         : true;
 
-      return matchesType && matchesHeight && matchesSearch;
-    });
+      // get stats based on the pokemon details
+      const hp = pokemon.details?.stats.find((stat) => stat.stat.name === PokemonStatEnum.HP)?.base_stat || 0;
+      const attack = pokemon.details?.stats.find((stat) => stat.stat.name === PokemonStatEnum.ATTACK)?.base_stat || 0;
+      const defense = pokemon.details?.stats.find((stat) => stat.stat.name === PokemonStatEnum.DEFENSE)?.base_stat || 0;
+      const speed = pokemon.details?.stats.find((stat) => stat.stat.name === PokemonStatEnum.SPEED)?.base_stat || 0;
 
-    console.log('filteredPokemons', filteredPokemons);
+      // check if the stats are not zero
+      // make sure the stats are not zero before applying the filters
+      const hasNonZeroStats = hasValue(filters.stats) &&
+        hasValue(filters.stats?.hp) &&
+        hasValue(filters.stats?.attack) &&
+        hasValue(filters.stats?.defense) &&
+        hasValue(filters.stats?.speed);
+
+      // Add the matchesStats condition
+      const matchesStats = filters.stats && hasNonZeroStats
+        ? (filters.stats.hp ? hp <= filters.stats.hp : true) &&
+        (filters.stats.attack ? attack <= filters.stats.attack : true) &&
+        (filters.stats.defense ? defense <= filters.stats.defense : true) &&
+        (filters.stats.speed ? speed <= filters.stats.speed : true)
+        : true;
+
+      return matchesType && matchesHeight && matchesSearch && matchesStats;
+    });
 
     ctx.patchState({ filteredPokemons });
   }
