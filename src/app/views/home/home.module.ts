@@ -20,6 +20,7 @@ import { HomeComponent } from './home.component';
     ScrollingModule,
     PokemonCardModule,
     // Specify ng-circle-progress as an import
+    // Demo link for reference: https://bootsoon.github.io/ng-circle-progress/
     NgCircleProgressModule.forRoot({
       "radius": 60,
       "space": -10,
@@ -30,6 +31,11 @@ import { HomeComponent } from './home.component';
       "innerStrokeColor": "#e7e8ea",
       "innerStrokeWidth": 10,
       "title": "Loading batch data...",
+      "titleColor": "700",
+      "showSubtitle": true,
+      "subtitle": "Please wait while we load the data.",
+      "subtitleColor": "700",
+      "subtitleFontSize": "12",
       "animateTitle": false,
       "animationDuration": 1000,
       "showUnits": false,

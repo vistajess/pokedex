@@ -12,7 +12,7 @@ import { Pokemon, PokemonDetail } from 'src/app/core/types';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss', './components/virtualized-viewport/virtualized-viewport.css']
+  styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -28,6 +28,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   totalLoaded$: Observable<number>; // Observable for total loaded Pokémon count
 
+  isMaxPokemonsLoaded$: Observable<boolean>; // Observable to track if max Pokémon are loaded
+
+  isBatchLoading$: Observable<boolean>; // Observable to track if batch loading is in progress
+
   itemSize = 50; // Height of each item in pixels
 
   private destroy$ = new Subject<void>(); // Subject to manage unsubscription
@@ -42,6 +46,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isLoading$ = this.store.select(PokemonSelectors.isLoading);
     this.totalLoaded$ = this.store.select(PokemonSelectors.totalLoaded)
       .pipe(map((totalLoaded) => ((totalLoaded ?? 0) / 1000) * 100)); // Calculate percentage of loaded Pokémon
+    this.isMaxPokemonsLoaded$ = this.store.select(PokemonSelectors.isMaxPokemonsLoaded);
+    this.isBatchLoading$ = this.store.select(PokemonSelectors.isBatchLoading);
   }
 
   ///

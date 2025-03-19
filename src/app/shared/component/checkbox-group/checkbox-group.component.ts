@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { BaseFormFieldComponent } from '../base-form-field/base-form-field.component';
 
@@ -19,9 +19,21 @@ export interface CheckboxOption {
     }
   ]
 })
-export class CheckboxGroupComponent extends BaseFormFieldComponent implements ControlValueAccessor {
+export class CheckboxGroupComponent extends BaseFormFieldComponent {
+
+  constructor(
+    private cd: ChangeDetectorRef
+  ) {
+    super();
+  }
+
 
   @Input() options: { label: string; value: string }[] = [];
+
+  override writeValue(value: any): void {
+    this.value = Array.isArray(value) ? value : [];
+    this.cd.markForCheck();
+  }
 
   onCheckboxChange(event: Event, checkboxValue: string): void {
     const checked = (event.target as HTMLInputElement).checked;

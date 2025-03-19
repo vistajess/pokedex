@@ -27,17 +27,19 @@ export class PokemonState {
  */
   @Action(LoadPokemons)
   async loadPokemons(ctx: StateContext<PokemonStateModel>, { payload }: LoadPokemons) {
+    ctx.patchState({ isLoading: true });
     const { batchSize } = payload;
     const cachedData = await this.indexedDBService.get<Pokemon[]>('pokemonList');
     const totalPokemons = 1000; // total pokemons to load
 
     if (cachedData && cachedData.length >= totalPokemons) {
-      ctx.patchState({ pokemons: cachedData, totalLoaded: cachedData.length, isLoading: false });
+      console.log('ctx', ctx.getState());
+      ctx.patchState({ pokemons: cachedData, totalLoaded: cachedData.length, isMaxPokemonsLoaded: true, isLoading: false, isBatchLoading: false });
       return;
     }
 
     const pokemonMap = new Map((cachedData || []).map((p: any) => [p.name, p]));
-    ctx.patchState({ isLoading: true });
+    ctx.patchState({ isLoading: true, isBatchLoading: true });
 
     for (let offset = 0; offset < totalPokemons; offset += batchSize) {
       const batch = await this.pokemonService.getPokemonList(batchSize, offset).toPromise();
@@ -62,7 +64,7 @@ export class PokemonState {
       await new Promise((resolve) => setTimeout(resolve, 3000)); // Delay for API-friendly batching
     }
 
-    ctx.patchState({ isLoading: false });
+    ctx.patchState({ isLoading: false, isBatchLoading: false, isMaxPokemonsLoaded: true });
 
   }
 

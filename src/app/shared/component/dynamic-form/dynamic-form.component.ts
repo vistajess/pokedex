@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { DynamicFieldConfig } from '../../directives/dynamic-form-field/dynamic-form-field.directive';
+import { DynamicFieldConfig } from './dynamic-form-field/dynamic-form-field.directive';
 
 @Component({
   selector: 'app-dynamic-form',

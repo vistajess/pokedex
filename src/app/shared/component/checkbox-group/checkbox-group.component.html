@@ -6,7 +6,7 @@
         <input
           type="checkbox"
           [id]="option.value"
-          [checked]="value.includes(option.value)"
+          [checked]="value?.includes(option.value)"
           (change)="onCheckboxChange($event, option.value)"
         />
         <span class="checkbox-custom"></span>

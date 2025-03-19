@@ -10,10 +10,14 @@ export interface PokemonStateModel {
   pokemons: Pokemon[];
   /** Total number of Pokémon loaded */
   totalLoaded: number;
+  /** Maximum number of Pokémon to load */
+  isMaxPokemonsLoaded: boolean;
   /** Currently selected Pokémon with detailed information */
   selectedPokemon: Pokemon | null;
   /** Flag indicating if a request is in progress */
   isLoading: boolean;
+  /** Flag indicating if a batch request is in progress */
+  isBatchLoading: boolean;
   /** Error message if any request fails */
   error: string | null;
   /** Current offset for paginated loading */
@@ -36,8 +40,10 @@ export interface PokemonStateModel {
 export const defaultPokemonState: PokemonStateModel = {
   pokemons: [],
   totalLoaded: 0,
+  isMaxPokemonsLoaded: false,
   selectedPokemon: null,
   isLoading: false,
+  isBatchLoading: false,
   error: null,
   offset: 0,
   limit: 20,
