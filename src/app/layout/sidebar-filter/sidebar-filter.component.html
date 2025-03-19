@@ -1,16 +1,9 @@
 <aside class="sidebar">
-  <form [formGroup]="form" class="form">
+  <!-- <form [formGroup]="form" class="form">
     <app-dropdown
       formControlName="type"
       [options]="pokemonTypeOptions"
       placeholder="Select Pokémon Type"
-    >
-    </app-dropdown>
-
-    <app-dropdown
-      formControlName="rarity"
-      [options]="pokemonRarityOptions"
-      placeholder="Select Pokémon Rarity"
     >
     </app-dropdown>
 
@@ -21,12 +14,12 @@
     >
     </app-checkbox-group>
 
-    <div>
+    <div formGroupName="stats">
       <h4>Stats</h4>
       <div class="slider-container">
         <span>HP</span>
         <app-slider-number
-          formControlName="hpStat"
+          formControlName="hp"
           [min]="0"
           [max]="100"
         ></app-slider-number>
@@ -34,7 +27,7 @@
       <div class="slider-container">
         <span>Attack</span>
         <app-slider-number
-          formControlName="attackStat"
+          formControlName="attack"
           [min]="0"
           [max]="100"
         ></app-slider-number>
@@ -42,7 +35,7 @@
       <div class="slider-container">
         <span>Defense</span>
         <app-slider-number
-          formControlName="defenseStat"
+          formControlName="defense"
           [min]="0"
           [max]="100"
         ></app-slider-number>
@@ -50,7 +43,7 @@
       <div class="slider-container">
         <span>Speed</span>
         <app-slider-number
-          formControlName="speedStat"
+          formControlName="speed"
           [min]="0"
           [max]="100"
         ></app-slider-number>
@@ -79,5 +72,32 @@
         🔍 <strong>{{ (pokemonList$ | async)?.length }} Pokémon found</strong>
       </p>
     </div>
-  </form>
+  </form> -->
+
+  <app-dynamic-form
+    [dynamicFormGroup]="form"
+    [fieldConfigs]="formFieldConfigs"
+  ></app-dynamic-form>
+  <div class="action-buttons">
+    <button
+      type="button"
+      class="btn btn-primary btn-sm"
+      (click)="filterPokemon()"
+    >
+      Search
+    </button>
+    <button
+      type="button"
+      class="btn btn-secondary btn-sm"
+      (click)="clearFilters()"
+    >
+      Clear Filters
+    </button>
+  </div>
+
+  <div class="result-count" *ngIf="pokemonFilters$ | async as pokemonFilters">
+    <p>
+      🔍 <strong>{{ (pokemonList$ | async)?.length }} Pokémon found</strong>
+    </p>
+  </div>
 </aside>

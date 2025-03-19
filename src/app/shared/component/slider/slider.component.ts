@@ -1,5 +1,6 @@
 import { Component, forwardRef, Input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { BaseFormFieldComponent } from '../base-form-field/base-form-field.component';
 
 @Component({
   selector: 'app-slider-number',
@@ -13,28 +14,14 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
     }
   ]
 })
-export class SliderNumberComponent implements ControlValueAccessor {
+export class SliderNumberComponent extends BaseFormFieldComponent implements ControlValueAccessor {
+
   @Input() min: number = 0;
+
   @Input() max: number = 100;
 
-  value: number = 0;
-  onChange: any = () => { };
-  onTouched: any = () => { };
-
-  writeValue(value: number): void {
-    this.value = value;
-  }
-
-  registerOnChange(fn: any): void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: any): void {
-    this.onTouched = fn;
-  }
-
   onSliderChange(event: any) {
-    this.value = event.target.value;
+    this.value = parseInt(event.target.value, 10); // Convert the value to an integer
     this.onChange(this.value);
     this.onTouched();
   }

@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from './core/guard/auth-guard.service';
 const routes: Routes = [
   {
     path: '',
@@ -9,11 +8,11 @@ const routes: Routes = [
   },
   {
     path: '',
-    loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule)
+    loadChildren: () => import('./views/home/home.module').then(m => m.HomeModule)
   },
   {
     path: 'pokemon/:id',
-    loadChildren: () => import('./pages/detail/detail.module').then(m => m.DetailModule)
+    loadChildren: () => import('./views/detail/detail.module').then(m => m.DetailModule)
   },
   {
     path: '**',

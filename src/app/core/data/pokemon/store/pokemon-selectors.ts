@@ -12,8 +12,6 @@ export class PokemonSelectors {
   /**
    * Selects and transforms the pokemon list from the state
    */
-
-
   @Selector()
   static pokemons(state: PokemonStateModel): Pokemon[] {
     return state.pokemons || [];

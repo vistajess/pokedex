@@ -1,6 +1,6 @@
 <app-header (onSearchChanged)="onSearchChanged($event)"></app-header>
 <div class="main-container">
-  <app-sidebar (filtersChanged)="onFiltersChanged($event)"></app-sidebar>
+  <app-sidebar-filter (filtersChanged)="onFiltersChanged($event)"></app-sidebar-filter>
 
   <div class="pokemon-list-container">
     <div *ngIf="isLoading$ | async" class="progress-bar-container">

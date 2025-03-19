@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { BaseFormFieldComponent } from '../base-form-field/base-form-field.component';
 
 @Component({
   selector: 'app-checkbox',
@@ -13,33 +14,13 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
     }
   ]
 })
-export class CheckboxComponent implements ControlValueAccessor {
-
-  @Input() label: string = '';
-
-  @Input() value: boolean = false; 
+export class CheckboxComponent extends BaseFormFieldComponent implements ControlValueAccessor {
 
   @Input() checked: boolean = false;
 
   @Input() disabled: boolean = false;
 
   @Output() checkboxChange = new EventEmitter<{ value: any, checked: boolean }>();
-
-  // ControlValueAccessor methods
-  onChange: any = () => { };
-  onTouched: any = () => { };
-
-  writeValue(value: boolean): void {
-    this.checked = value;
-  }
-
-  registerOnChange(fn: any): void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: any): void {
-    this.onTouched = fn;
-  }
 
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
