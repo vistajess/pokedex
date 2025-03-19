@@ -7,6 +7,7 @@ import { PokemonCardModule } from 'src/app/shared/component/pokemon-card/pokemon
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
+import { DetailDrawerModule } from '../detail-drawer/detail-drawer.module';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { HomeComponent } from './home.component';
     LayoutModule,
     ScrollingModule,
     PokemonCardModule,
+    DetailDrawerModule,
     // Specify ng-circle-progress as an import
     // Demo link for reference: https://bootsoon.github.io/ng-circle-progress/
     NgCircleProgressModule.forRoot({

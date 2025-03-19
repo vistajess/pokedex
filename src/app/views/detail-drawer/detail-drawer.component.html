@@ -1,0 +1,45 @@
+<app-drawer
+  [title]="'Pokémon Details'"
+  [isOpen]="isDrawerOpen"
+  (drawerClosed)="drawerClosed.emit()"
+>
+  <div class="pokemon-details">
+    <img
+      [src]="
+        selectedPokemon?.sprites?.other?.showdown?.front_default ||
+        selectedPokemon?.sprites?.front_default
+      "
+      [alt]="selectedPokemon?.name"
+      class="pokemon-image"
+    />
+
+    <h3>{{ selectedPokemon?.name }}</h3>
+
+    <div class="types">
+      <div
+        *ngFor="let type of selectedPokemon?.types"
+        [ngClass]="type.type.name"
+      >
+        <img [src]="type | typeIcon" [alt]="selectedPokemon?.name" />
+        <span class="type-name">{{ type.type.name }}</span>
+      </div>
+    </div>
+
+    <h3>Stats</h3>
+    <div>
+      <div
+        *ngFor="let stat of selectedPokemon?.stats; let i = index"
+        class="stat-item"
+      >
+        <span>{{ stat.stat.name }}:</span>
+        <div class="stat-bar">
+          <div
+            class="stat-fill"
+            [ngClass]="getStatClasses(i, stat.base_stat)"
+            [ngStyle]="getStatFillStyle(stat.base_stat)"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-drawer>

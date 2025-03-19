@@ -2,10 +2,10 @@ import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { Observable, Subject } from 'rxjs';
-import { filter, map, pairwise, takeUntil, tap, throttleTime } from 'rxjs/operators';
+import { filter, map, pairwise, takeUntil, throttleTime } from 'rxjs/operators';
 import { PokemonHelperService } from 'src/app/core/data/pokemon/helpers/services/pokemon-helper.service';
 import { PokemonSelectors } from 'src/app/core/data/pokemon/store';
-import { FetchFilteredPokemon, LoadPokemons, SetFilters } from 'src/app/core/data/pokemon/store/pokemon-actions';
+import { LoadPokemons, SetFilters } from 'src/app/core/data/pokemon/store/pokemon-actions';
 import { PokemonFilters } from 'src/app/core/data/pokemon/types/pokemon-filters';
 import { Pokemon, PokemonDetail } from 'src/app/core/types';
 
@@ -33,6 +33,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   isBatchLoading$: Observable<boolean>; // Observable to track if batch loading is in progress
 
   itemSize = 50; // Height of each item in pixels
+
+  selectedPokemon: PokemonDetail | null = null;
+
+  isDrawerOpen = false;
 
   private destroy$ = new Subject<void>(); // Subject to manage unsubscription
 
@@ -127,5 +131,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   onSearchChanged(filters: PokemonFilters): void {
     // Dispatch action to set filters when search changes
     this.store.dispatch(new SetFilters(filters));
+  }
+
+  onPokemonSelected(pokemon: PokemonDetail): void {
+    console.log('pokemon', pokemon);
+    this.selectedPokemon = pokemon;
+    this.isDrawerOpen = true;
   }
 }

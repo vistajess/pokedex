@@ -12,6 +12,10 @@
   position: relative;
   width: 250px;
   cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 0 20px rgba(0,255,255,0.5);
+  }
 }
 
 .details-image {

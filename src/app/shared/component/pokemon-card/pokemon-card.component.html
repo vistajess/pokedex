@@ -1,12 +1,13 @@
-<div *ngIf="details" class="pokemon-card">
-  <div class="card-header">
-
-  </div>
+<div *ngIf="details" class="pokemon-card" (click)="onPokemonSelected()">
+  <div class="card-header"></div>
 
   <div class="pokemon-image-container" [ngClass]="details.types[0].type.name">
-    <div class='pokeball-bg'></div>
+    <div class="pokeball-bg"></div>
     <img
-      [src]="details?.sprites?.other?.showdown?.front_default"
+      [src]="
+        details?.sprites?.other?.showdown?.front_default ||
+        details?.sprites?.front_default
+      "
       [alt]="details.name"
       class="details-image"
     />
@@ -15,11 +16,8 @@
   <div class="card-content">
     <h2 class="pokemon-name">
       {{ details.name | titlecase }}
-      <span class="pokemon-number">
-        #{{ details?.id }}
-      </span>
+      <span class="pokemon-number"> #{{ details?.id }} </span>
     </h2>
-
 
     <div class="types">
       <div *ngFor="let type of details.types" [ngClass]="type.type.name">
