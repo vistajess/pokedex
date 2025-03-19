@@ -1,0 +1,16 @@
+<div class="drawer-overlay" [class.active]="isOpen" (click)="closeDrawer()">
+  <div
+    class="drawer"
+    [class.active]="isOpen"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="drawer-header">
+      <h2>{{ title }}</h2>
+      <button class="close-btn" (click)="closeDrawer()">✖️</button>
+    </div>
+
+    <div class="drawer-body">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

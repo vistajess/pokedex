@@ -45,7 +45,7 @@
             "
             class="pokemon-card virtual-grid-item"
           >
-            <pokemon-card [details]="pokemon.details"></pokemon-card>
+            <pokemon-card [details]="pokemon.details" (pokemonSelected)="onPokemonSelected($event)"></pokemon-card>
           </div>
         </div>
 
@@ -65,3 +65,9 @@
     </div>
   </div>
 </div>
+
+<pokemon-detail-drawer
+  [isDrawerOpen]="isDrawerOpen"
+  [selectedPokemon]="selectedPokemon"
+  (drawerClosed)="isDrawerOpen = false"
+></pokemon-detail-drawer>

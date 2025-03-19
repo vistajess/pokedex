@@ -3,7 +3,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
-    "types": []
+    "moduleResolution": "node",     // Enables Node.js-style module resolution
+    "resolveJsonModule": true,      // Required for OpenAI's JSON imports
+    "skipLibCheck": true,           // Prevents type checking in `node_modules`
+    "types": ["node"]               // Ensures Node.js types are available
   },
   "files": [
     "src/main.ts",

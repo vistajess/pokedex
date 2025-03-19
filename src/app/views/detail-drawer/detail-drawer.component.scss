@@ -1,0 +1,74 @@
+.pokemon-details {
+  text-align: center;
+  padding: 1rem;
+}
+
+.pokemon-image {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 1rem;
+}
+
+.pokemon-types {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.pokemon-types span {
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.type-grass { background-color: #78c850; }
+.type-poison { background-color: #a040a0; }
+.type-fire { background-color: #f08030; }
+.type-water { background-color: #6890f0; }
+.type-electric { background-color: #f8d030; }
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0.5rem 0;
+  width: 100%;
+
+  span {
+    width: 30%;
+  }
+}
+
+.stat-bar {
+  width: 70%;
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.stat-fill {
+  height: 100%;
+  background-color: #4caf50;
+}
+
+.stat-fill.zero {
+  background-color: #e0e0e0; /* Grey for zero values */
+}
+
+/* Animation Delay */
+// .stat-fill.delay-1 { animation: fill 0.5s ease-out 0.2s forwards; }
+// .stat-fill.delay-2 { animation: fill 0.5s ease-out 0.4s forwards; }
+// .stat-fill.delay-3 { animation: fill 0.5s ease-out 0.6s forwards; }
+
+@keyframes fill {
+  from {
+    width: 0px;
+  }
+  to {
+    width: var(--progress-width);
+  }
+}

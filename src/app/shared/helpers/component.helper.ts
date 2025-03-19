@@ -8,5 +8,3 @@ export enum ComponentType {
   CHECKBOX = 'checkbox',
   SLIDER = 'slider'
 }
-
-      
