@@ -5,10 +5,11 @@ import { map } from "rxjs/operators";
 import { Pokemon, PokemonStatEnum } from "src/app/core/types";
 import { IndexedDBService } from "../helpers/services/indexed-db.service";
 import { PokemonService } from "../services";
-import { ApplyFilters, LoadPokemons, SetFilters } from "./pokemon-actions";
+import { ApplyFilters, LoadPokemons, OpenAISearchPokemon, OpenAISearchPokemonFailure, OpenAISearchPokemonSuccess, SetFilters } from "./pokemon-actions";
 import { defaultPokemonState, PokemonStateModel } from "./pokemon-state-model";
 import { categorizeHeight } from "../helpers/pokemon-height";
 import { hasValue } from "src/app/shared/helpers/object.helper";
+import { OPENAI_NO_RESULTS_PROMPT, OpenAIService } from "src/app/core/services/openai.service";
 
 
 @State<PokemonStateModel>({
@@ -17,7 +18,11 @@ import { hasValue } from "src/app/shared/helpers/object.helper";
 })
 @Injectable()
 export class PokemonState {
-  constructor(private pokemonService: PokemonService, private indexedDBService: IndexedDBService) { }
+  constructor(
+    private pokemonService: PokemonService,
+    private indexedDBService: IndexedDBService,
+    private openaiService: OpenAIService
+  ) { }
 
   /**
  * Loads a batch of pokemons from the API and caches them in IndexedDB.
@@ -33,7 +38,6 @@ export class PokemonState {
     const totalPokemons = 1000; // total pokemons to load
 
     if (cachedData && cachedData.length >= totalPokemons) {
-      console.log('ctx', ctx.getState());
       ctx.patchState({ pokemons: cachedData, totalLoaded: cachedData.length, isMaxPokemonsLoaded: true, isLoading: false, isBatchLoading: false });
       return;
     }
@@ -68,6 +72,47 @@ export class PokemonState {
 
   }
 
+  @Action(OpenAISearchPokemon)
+  async openAISearchPokemon(ctx: StateContext<PokemonStateModel>, { payload }: OpenAISearchPokemon) {
+    ctx.patchState({ isLoading: true });
+    const { filters } = ctx.getState();
+    const { search } = payload;
+
+    try {
+      const openAIResponse = await this.openaiService.interpretDescription(search);
+      if (openAIResponse === OPENAI_NO_RESULTS_PROMPT) {
+        ctx.patchState({ isLoading: false, filters: { ...filters, search: [...search] } });
+        return;
+      } else {
+        const arrayOfPokemonNames = openAIResponse.split(',');
+        ctx.dispatch(new OpenAISearchPokemonSuccess({ search: arrayOfPokemonNames }));
+      }
+    } catch (error: any) {
+      ctx.dispatch(new OpenAISearchPokemonFailure({ error: error }));
+    }
+  }
+
+  @Action(OpenAISearchPokemonSuccess)
+  openAISearchPokemonSuccess(ctx: StateContext<PokemonStateModel>, { payload }: OpenAISearchPokemonSuccess) {
+    const { filters } = ctx.getState();
+    const { search } = payload;
+    const hasSearch = search.length > 0;
+    ctx.patchState({ 
+      isLoading: hasSearch,
+      filters: { ...filters, search: hasSearch ? [...search] : [] },
+      error: null,
+      hasError: false 
+    });
+    ctx.dispatch(new SetFilters({ ...filters, search: hasSearch ? [...search] : [] }));
+  }
+
+  @Action(OpenAISearchPokemonFailure)
+  openAISearchPokemonFailure(ctx: StateContext<PokemonStateModel>, { error }: OpenAISearchPokemonFailure) {
+    const { filters } = ctx.getState();
+
+    ctx.patchState({ isLoading: false, filters: { ...filters, }, error, hasError: true });
+  }
+
   /**
    * Sets the filters in the state.
    * @param ctx The state context
@@ -99,7 +144,7 @@ export class PokemonState {
 
       // check the search
       const matchesSearch = filters.search
-        ? pokemon.name.toLowerCase().includes(filters.search.toLowerCase())
+        ? filters.search.some((s: string) => pokemon.name.toLowerCase().includes(s.toLowerCase()))
         : true;
 
       // get stats based on the pokemon details
@@ -118,16 +163,16 @@ export class PokemonState {
 
       // Add the matchesStats condition
       const matchesStats = filters.stats && hasNonZeroStats
-        ? (filters.stats.hp ? hp <= filters.stats.hp : true) &&
-        (filters.stats.attack ? attack <= filters.stats.attack : true) &&
-        (filters.stats.defense ? defense <= filters.stats.defense : true) &&
-        (filters.stats.speed ? speed <= filters.stats.speed : true)
+        ? (filters.stats.hp ? hp >= filters.stats.hp : true) &&
+        (filters.stats.attack ? attack >= filters.stats.attack : true) &&
+        (filters.stats.defense ? defense >= filters.stats.defense : true) &&
+        (filters.stats.speed ? speed >= filters.stats.speed : true)
         : true;
 
       return matchesType && matchesHeight && matchesSearch && matchesStats;
     });
 
-    ctx.patchState({ filteredPokemons });
+    ctx.patchState({ filteredPokemons, isLoading: false, hasError: false, error: null });
   }
 
 }

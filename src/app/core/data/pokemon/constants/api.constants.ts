@@ -11,7 +11,9 @@ export const POKEMON_API = {
     /** Pokemon species endpoint for fetching evolutionary data */
     POKEMON_SPECIES: '/pokemon-species',
     /** Types endpoint for fetching type data */
-    TYPES: '/type'
+    TYPES: '/type',
+    /** Abilities endpoint for fetching ability data */
+    ABILITIES: '/ability'
     // Add other endpoints as needed
   }
 }; 

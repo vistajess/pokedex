@@ -1,9 +1,9 @@
-import { Selector, State } from '@ngxs/store';
-import { PokemonStateModel } from './pokemon-state-model';
-import { NamedAPIResource, Pokemon } from 'src/app/core/types';
-import { PokemonState } from './pokemon-state';
 import { Injectable } from '@angular/core';
+import { Selector, State } from '@ngxs/store';
+import { Pokemon } from 'src/app/core/types';
 import { PokemonFilters } from '../types/pokemon-filters';
+import { PokemonState } from './pokemon-state';
+import { PokemonStateModel } from './pokemon-state-model';
 @State<PokemonStateModel>({
   name: 'pokemon'
 })
@@ -17,11 +17,17 @@ export class PokemonSelectors {
     return state.pokemons || [];
   }
 
+  /**
+   * Selects the filtered pokemons
+   */
   @Selector()
   static filteredPokemons(state: PokemonStateModel): Pokemon[] {
     return state.filteredPokemons || [];
   }
 
+  /**
+   * Selects the visible pokemons
+   */
   @Selector()
   static visiblePokemons(state: PokemonStateModel) {
     return state.filters && Object.values(state.filters).some(val => val)
@@ -29,6 +35,9 @@ export class PokemonSelectors {
       : state.pokemons || [];
   }
 
+  /**
+   * Selects the filters
+   */
   @Selector()
   static filters(state: PokemonStateModel): PokemonFilters {
     return state.filters || {};
@@ -42,16 +51,25 @@ export class PokemonSelectors {
       return state.isLoading;
     }
   
-    @Selector([PokemonState])
-    static isBatchLoading(state: PokemonStateModel) {
-      return state.isBatchLoading;
-    }
+  /**
+   * Selects the batch loading state
+   */
+  @Selector([PokemonState])
+  static isBatchLoading(state: PokemonStateModel) {
+    return state.isBatchLoading;
+  }
 
+  /**
+   * Selects the total loaded state
+   */
   @Selector()
   static totalLoaded(state: PokemonStateModel): number {
     return state.totalLoaded;
   }
 
+  /**
+   * Selects the max pokemons loaded state
+   */
   @Selector()
   static isMaxPokemonsLoaded(state: PokemonStateModel): boolean {
     return state.isMaxPokemonsLoaded;
@@ -70,19 +88,36 @@ export class PokemonSelectors {
     return state.offset;
   }
 
+  /**
+   * Selects the limit state
+   */ 
   @Selector([PokemonState])
   static getLimit(state: PokemonStateModel): number {
     return state.limit;
   }
 
+  /**
+   * Selects the pokemon detail by name
+   */
   @Selector([PokemonState])
   static getPokemonDetailByName(state: PokemonStateModel) {
     return (name: string) => state.details[name];
   }
 
+  /**
+   * Selects the loading detail state
+   */
   @Selector([PokemonState])
   static isLoadingDetail(state: PokemonStateModel) {
     return (id: string) => state.loadingDetails.includes(id);
+  }
+
+  /**
+   * Selects the has error state
+   */
+  @Selector([PokemonState])
+  static hasError(state: PokemonStateModel) {
+    return state.hasError;
   }
 
   /**

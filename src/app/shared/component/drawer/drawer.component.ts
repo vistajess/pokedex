@@ -6,10 +6,16 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrls: ['./drawer.component.scss'],
 })
 export class DrawerComponent {
-  @Input() title: string = '';
-  @Input() isOpen: boolean = false;
-  @Output() drawerClosed = new EventEmitter<void>();
 
+  @Input() title: string = ''; // Title of the drawer
+
+  @Input() isOpen: boolean = false; // Whether the drawer is open
+
+  @Output() drawerClosed = new EventEmitter<void>(); // Emits when the drawer is closed
+
+  /**
+   * Closes the drawer
+   */
   closeDrawer() {
     this.isOpen = false;
     this.drawerClosed.emit();

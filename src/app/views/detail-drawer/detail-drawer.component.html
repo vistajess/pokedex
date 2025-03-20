@@ -3,43 +3,121 @@
   [isOpen]="isDrawerOpen"
   (drawerClosed)="drawerClosed.emit()"
 >
-  <div class="pokemon-details">
-    <img
-      [src]="
-        selectedPokemon?.sprites?.other?.showdown?.front_default ||
-        selectedPokemon?.sprites?.front_default
-      "
-      [alt]="selectedPokemon?.name"
-      class="pokemon-image"
-    />
+  <div class="loading-pokemon-container" *ngIf="isLoading$ | async">
+    <div>
+      <div class="loader-spinner-container">
+        <div class="loader-spinner"></div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="pokemon-card"
+    *ngIf="speciesEvolutionDetails$ | async as speciesEvolutionDetails"
+  >
+    <div class="pokemon-header">
+      <div class="pokemon-image-container">
+        <img
+          [src]="
+            details?.sprites?.other?.dream_world?.front_default ||
+            details?.sprites?.front_default
+          "
+          [alt]="details?.name"
+          class="pokemon-image"
+        />
+      </div>
+      <div class="pokemon-number">#{{ details?.id }}</div>
+      <h1 class="pokemon-name">{{ details?.name }}</h1>
+      <div class="pokemon-subtitle">
+        {{ getGenera(speciesEvolutionDetails.species) }}
+      </div>
 
-    <h3>{{ selectedPokemon?.name }}</h3>
-
-    <div class="types">
-      <div
-        *ngFor="let type of selectedPokemon?.types"
-        [ngClass]="type.type.name"
-      >
-        <img [src]="type | typeIcon" [alt]="selectedPokemon?.name" />
-        <span class="type-name">{{ type.type.name }}</span>
+      <div class="type-badges types">
+        <span
+          *ngFor="let type of details?.types"
+          class="type-badge"
+          [ngClass]="type.type.name"
+        >
+          {{ type.type.name }}
+        </span>
       </div>
     </div>
 
-    <h3>Stats</h3>
-    <div>
-      <div
-        *ngFor="let stat of selectedPokemon?.stats; let i = index"
-        class="stat-item"
+    <div class="section-title">POKÉDEX ENTRY</div>
+    <p class="pokedex-entry">
+      <span
+        [innerHTML]="getEnglishSpeciesDetails(speciesEvolutionDetails.species)"
+      ></span>
+    </p>
+
+    <div class="section-title">ABILITIES</div>
+    <div class="abilities">
+      <span
+        class="ability-badge"
+        [ngClass]="{ 'selected-ability': selectedAbility === ability }"
+        *ngFor="let ability of abilities"
+        (click)="selectedAbility = ability"
       >
-        <span>{{ stat.stat.name }}:</span>
+        {{ ability.name }}
+      </span>
+    </div>
+    <div class="ability-description">
+      <span
+        *ngIf="selectedAbility"
+        [innerHTML]="getEnglishAffectEntries(selectedAbility)"
+      ></span>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-label">HEIGHT</div>
+        <div class="stat-value">{{ getHeight(details?.height || 0) }}</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">WEIGHT</div>
+        <div class="stat-value">{{ getWeight(details?.weight || 0) }}</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">BASE EXP</div>
+        <div class="stat-value">{{ details?.base_experience }}</div>
+      </div>
+    </div>
+
+    <div class="section-title">STATS</div>
+    <div class="stats-bars">
+      <ng-container *ngFor="let stat of details?.stats; let i = index">
+        <div class="stat-bar-label">{{ stat.stat.name }}</div>
         <div class="stat-bar">
           <div
-            class="stat-fill"
-            [ngClass]="getStatClasses(i, stat.base_stat)"
-            [ngStyle]="getStatFillStyle(stat.base_stat)"
+            class="stat-bar-fill"
+            [ngStyle]="{ width: stat.base_stat + '%' }"
           ></div>
         </div>
+        <div class="stat-bar-value">{{ stat.base_stat }}</div>
+      </ng-container>
+    </div>
+
+    <div class="section-title">EVOLUTION</div>
+    <div class="evolution-chain" *ngIf="evolutionChainDetails.length !== 0">
+      <div
+        class="evolution-item"
+        *ngFor="let evolution of evolutionChainDetails"
+      >
+        <img
+          [src]="
+            evolution?.details?.sprites?.other?.dream_world?.front_default ||
+            evolution?.details?.sprites?.front_default
+          "
+          alt="evolution.details.name"
+          width="50"
+          [title]="evolution.details.name"
+        />
+        <div class="evolution-level">Lvl {{ evolution?.minLevel }}</div>
       </div>
+    </div>
+
+    <div class="navigation">
+      <a href="#" class="nav-item">← Prinplup #394</a>
+      <a href="#" class="nav-item">Starly #396 →</a>
     </div>
   </div>
 </app-drawer>

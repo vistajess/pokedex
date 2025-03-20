@@ -18,6 +18,8 @@ export interface PokemonStateModel {
   isLoading: boolean;
   /** Flag indicating if a batch request is in progress */
   isBatchLoading: boolean;
+  /** Flag indicating if any request fails */
+  hasError: boolean;
   /** Error message if any request fails */
   error: string | null;
   /** Current offset for paginated loading */
@@ -44,6 +46,7 @@ export const defaultPokemonState: PokemonStateModel = {
   selectedPokemon: null,
   isLoading: false,
   isBatchLoading: false,
+  hasError: false,
   error: null,
   offset: 0,
   limit: 20,
