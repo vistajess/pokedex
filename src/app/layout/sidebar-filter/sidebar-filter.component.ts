@@ -4,6 +4,7 @@ import { Store } from '@ngxs/store';
 import { map, Observable, Subject } from 'rxjs';
 import { PokemonSelectors } from 'src/app/core/data/pokemon';
 import { PokemonFilters } from 'src/app/core/data/pokemon/types/pokemon-filters';
+import { FilterService } from 'src/app/core/services/filter.service';
 import { Pokemon, PokemonTypeEnum } from 'src/app/core/types';
 import { CheckboxOption } from 'src/app/shared/component/checkbox-group/checkbox-group.component';
 import { DropdownOption } from 'src/app/shared/component/dropdown/dropdown.component';
@@ -49,6 +50,7 @@ export class SidebarFilterComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private store: Store,
+    private filterService: FilterService
   ) {
     // Initialize observables from store
     this.pokemonList$ = this.store.select(PokemonSelectors.visiblePokemons).pipe(
@@ -159,6 +161,8 @@ export class SidebarFilterComponent implements OnInit, OnDestroy {
       }
     });
     this.filtersChanged.emit(this.form.value);
+
+    this.filterService.onClearFiltersClicked.next();
   }
 
   // Helper to convert enum to dropdown options

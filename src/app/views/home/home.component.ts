@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild(CdkVirtualScrollViewport) viewport!: CdkVirtualScrollViewport; // Reference to the virtual scroll viewport
 
-  pokemonList$: Observable<any[]>; // Observable for the list of Pokémon
+  visiblePokemons$: Observable<any[]>; // Observable for the list of Pokémon
 
   isLoading$: Observable<boolean>; // Observable to track loading state
 
@@ -32,11 +32,15 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isBatchLoading$: Observable<boolean>; // Observable to track if batch loading is in progress
 
+  hasError$: Observable<boolean>; // Observable to track if any request fails
+
+  getError$: Observable<any>; // Observable to track if any request fails
+
   itemSize = 50; // Height of each item in pixels
 
-  selectedPokemon: PokemonDetail | null = null;
+  selectedPokemon: PokemonDetail | null = null; // Selected Pokémon
 
-  isDrawerOpen = false;
+  isDrawerOpen = false; // Whether the drawer is open
 
   private destroy$ = new Subject<void>(); // Subject to manage unsubscription
 
@@ -44,7 +48,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private store: Store,
     public pokemonHelperService: PokemonHelperService) {
     // Selectors to get data from the store
-    this.pokemonList$ = this.store.select(PokemonSelectors.visiblePokemons).pipe(
+    this.visiblePokemons$ = this.store.select(PokemonSelectors.visiblePokemons).pipe(
       map(list => list || []) // Ensure list is an array
     );
     this.isLoading$ = this.store.select(PokemonSelectors.isLoading);
@@ -52,6 +56,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       .pipe(map((totalLoaded) => ((totalLoaded ?? 0) / 1000) * 100)); // Calculate percentage of loaded Pokémon
     this.isMaxPokemonsLoaded$ = this.store.select(PokemonSelectors.isMaxPokemonsLoaded);
     this.isBatchLoading$ = this.store.select(PokemonSelectors.isBatchLoading);
+    this.hasError$ = this.store.select(PokemonSelectors.hasError);
+    this.getError$ = this.store.select(PokemonSelectors.getError);
   }
 
   ///
@@ -62,7 +68,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     // Load Pokémon data when component initializes
     this.store.dispatch(new LoadPokemons({ batchSize: 200 }));
 
-    this.pokemonList$
+    this.visiblePokemons$
       .pipe(takeUntil(this.destroy$)) // Unsubscribe when component is destroyed
       .subscribe(list => {
         this.pokemonHashMap.clear(); // Clear previous Pokémon data
@@ -77,9 +83,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     // Wait for the viewport to be available before setting up scroll handler
     if (this.viewport) {
-      this.setupScrollHandler(); // Initialize scroll handler
+      // Initialize scroll handler
+      this.setupScrollHandler();
     } else {
-      console.error('Virtual scroll viewport not initialized'); // Log error if viewport is not available
+      // Log error if viewport is not available
+      console.error('Virtual scroll viewport not initialized'); 
     }
   }
 
@@ -134,7 +142,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onPokemonSelected(pokemon: PokemonDetail): void {
-    console.log('pokemon', pokemon);
     this.selectedPokemon = pokemon;
     this.isDrawerOpen = true;
   }

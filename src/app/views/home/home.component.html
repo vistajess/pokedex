@@ -21,7 +21,7 @@
     </ng-container>
 
     <ng-container *ngIf="isLoading$ | async">
-      <div class="batch-loading-pokemon-container" *ngIf="(pokemonList$ | async)?.length === 0">
+      <div class="batch-loading-pokemon-container">
         <div>
           <div class="loader-spinner-container">
             <div class="loader-spinner"></div>
@@ -31,11 +31,11 @@
       </div>
     </ng-container>
 
-    <ng-container *ngIf="pokemonList$ | async as pokemonList">
+    <ng-container *ngIf="(isLoading$ | async) === false">
       <cdk-virtual-scroll-viewport
         [itemSize]="itemSize"
         class="virtual-grid-viewport"
-        *ngIf="pokemonList.length > 0"
+        *ngIf="pokemonHashMapToArray.length > 0"
       >
         <div class="virtual-grid-container">
           <div
@@ -45,29 +45,39 @@
             "
             class="pokemon-card virtual-grid-item"
           >
-            <pokemon-card [details]="pokemon.details" (pokemonSelected)="onPokemonSelected($event)"></pokemon-card>
+            <pokemon-card
+              [details]="pokemon.details"
+              (pokemonSelected)="onPokemonSelected($event)"
+            ></pokemon-card>
           </div>
-        </div>
-
-        <div class="loading-indicator" *ngIf="isLoading$ | async">
-          <p>Loading more Pokémon...</p>
         </div>
       </cdk-virtual-scroll-viewport>
     </ng-container>
 
     <div
       class="no-results-container"
-      *ngIf="(pokemonList$ | async)?.length === 0 && (isLoading$ | async) === false"
+      *ngIf="
+        (visiblePokemons$ | async)?.length === 0 &&
+        (isLoading$ | async) === false
+      "
     >
-      <img src="assets/images/jigglypuff.png" alt="No Results" />
-      <h2>No Pokémon Found</h2>
-      <p>Try adjusting your filters or searching for another Pokémon.</p>
+      <ng-container *ngIf="(hasError$ | async) === true">
+        <img src="assets/images/meowth.png" alt="No Results" />
+        <h2>Something went wrong</h2>
+        <p>Please try again later.</p>
+      </ng-container>
+
+      <ng-container *ngIf="(hasError$ | async) === false">
+        <img src="assets/images/jigglypuff.png" alt="No Results" />
+        <h2>No Pokémon Found</h2>
+        <p>Try adjusting your filters or searching for another Pokémon.</p>
+      </ng-container>
     </div>
   </div>
 </div>
 
 <pokemon-detail-drawer
   [isDrawerOpen]="isDrawerOpen"
-  [selectedPokemon]="selectedPokemon"
+  [details]="selectedPokemon"
   (drawerClosed)="isDrawerOpen = false"
 ></pokemon-detail-drawer>

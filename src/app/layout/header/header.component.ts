@@ -1,37 +1,51 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { Store } from '@ngxs/store';
+import { Subject, takeUntil } from 'rxjs';
+import { OpenAISearchPokemon, SetFilters } from 'src/app/core/data/pokemon';
 import { PokemonFilters } from 'src/app/core/data/pokemon/types/pokemon-filters';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { OpenAIService } from 'src/app/core/services/openai.service';
+import { FilterService } from 'src/app/core/services/filter.service';
+import { OPENAI_NO_RESULTS_PROMPT, OpenAIService } from 'src/app/core/services/openai.service';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
 
   searchControl = new FormControl('');
 
+  private _destroy$ = new Subject<void>();
+
   @Output() onSearchChanged = new EventEmitter<PokemonFilters>();
 
-  constructor(private openaiService: OpenAIService) { }
+  constructor(
+    private openaiService: OpenAIService,
+    private filterService: FilterService,
+    private store: Store
+  ) { }
 
   ngOnInit(): void {
-    // this.searchControl.valueChanges
-    //   .pipe(
-    //     debounceTime(500),
-    //     distinctUntilChanged()
-    //   )
-    //   .subscribe((value) => {
-    //     this.onSearchChanged.emit({ search: value });
-    //   });
+    this.filterService.onClearFiltersClicked
+      .pipe(takeUntil(this._destroy$))
+      .subscribe(() => {
+        this.searchControl.setValue('');
+        this.store.dispatch(new SetFilters({ 
+          type: null, 
+          heightCategory: null, 
+          search: undefined,
+          stats: { hp: 0, attack: 0, defense: 0, speed: 0 } 
+        }));
+      });
   }
 
-  interpretDescription() {
-    this.openaiService.interpretDescription(this.searchControl.value).then((result) => {
-      console.log(result);
-    });
+  ngOnDestroy(): void {
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 
+  async interpretDescription() {
+    this.store.dispatch(new OpenAISearchPokemon({ search: this.searchControl.value }));
+  }
 }

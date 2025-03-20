@@ -6,7 +6,8 @@
     "moduleResolution": "node",     // Enables Node.js-style module resolution
     "resolveJsonModule": true,      // Required for OpenAI's JSON imports
     "skipLibCheck": true,           // Prevents type checking in `node_modules`
-    "types": ["node"]               // Ensures Node.js types are available
+    "types": ["node"],               // Ensures Node.js types are available
+    "lib": ["es2021", "dom"]
   },
   "files": [
     "src/main.ts",
