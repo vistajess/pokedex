@@ -4,8 +4,6 @@ import express, { Request, Response } from 'express';
 import OpenAI from 'openai';
 import cors from 'cors';
 
-const BACKUP_OPEN_AI_API_KEY = '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';
-
 // Default message when no Pokémon match is found
 const OPENAI_NO_RESULTS_PROMPT = 'Sorry, I do not know that Pokémon.';
 
@@ -32,7 +30,7 @@ app.post('/interpretDescription', async (req: Request, res: Response): Promise<R
     return res.status(400).json({ error: 'Description is required' });
   }
 
-  const openAIKey = process.env.OPENAI_API_KEY || BACKUP_OPEN_AI_API_KEY;
+  const openAIKey = process.env.OPENAI_API_KEY;
   if (!openAIKey) {
     logger.error('OpenAI API Key is missing!');
     return res.status(500).json({ error: 'Server misconfiguration. Contact admin.' });
@@ -61,4 +59,7 @@ app.post('/interpretDescription', async (req: Request, res: Response): Promise<R
   }
 });
 
-export const api = onRequest(app);
+export const api = onRequest(
+  { secrets: ["OPENAI_API_KEY"] },
+  app
+);
