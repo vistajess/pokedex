@@ -9,6 +9,13 @@
     "types": ["node"],               // Ensures Node.js types are available
     "lib": ["es2021", "dom"]
   },
+  "paths": {
+    "@/*": ["src/*"],
+    "@core/*": ["src/app/core/*"],
+    "@shared/*": ["src/app/shared/*"],
+    "@views/*": ["src/app/views/*"],
+    "@components/*": ["src/app/shared/component/*"]
+  },
   "files": [
     "src/main.ts",
     "src/polyfills.ts"

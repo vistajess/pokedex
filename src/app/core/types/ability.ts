@@ -5,3 +5,9 @@ export interface PokemonAbility {
   slot: number;
   ability: NamedAPIResource;
 }
+
+export interface AbilityDetail {
+  id: number;
+  name: string;
+  effect_entries: { effect: string; language: NamedAPIResource }[];
+}

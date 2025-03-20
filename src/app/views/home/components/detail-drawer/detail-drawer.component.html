@@ -89,7 +89,7 @@
         <div class="stat-bar">
           <div
             class="stat-bar-fill"
-            [ngStyle]="{ width: stat.base_stat + '%' }"
+            [ngStyle]="{ width: (stat.base_stat / 255 * 100) + '%' }"
           ></div>
         </div>
         <div class="stat-bar-value">{{ stat.base_stat }}</div>
@@ -97,27 +97,40 @@
     </div>
 
     <div class="section-title">EVOLUTION</div>
-    <div class="evolution-chain" *ngIf="evolutionChainDetails.length !== 0">
-      <div
-        class="evolution-item"
-        *ngFor="let evolution of evolutionChainDetails"
-      >
-        <img
-          [src]="
-            evolution?.details?.sprites?.other?.dream_world?.front_default ||
-            evolution?.details?.sprites?.front_default
-          "
-          alt="evolution.details.name"
-          width="50"
-          [title]="evolution.details.name"
-        />
-        <div class="evolution-level">Lvl {{ evolution?.minLevel }}</div>
+      <div class="evolution-chain" *ngIf="evolutionChainDetails.length !== 0">
+        <div class="evolution-stage" *ngFor="let evolution of evolutionChainDetails; let i = index">
+          <div class="evolution-item">
+            <img
+              [src]="evolution?.details?.sprites?.other?.dream_world?.front_default || evolution?.details?.sprites?.front_default"
+              [alt]="evolution.details.name"
+            />
+          </div>
+          <div class="evolution-arrow" *ngIf="i < evolutionChainDetails.length - 1">
+            <span>→</span>
+            <div class="level-indicator">Lvl {{ evolutionChainDetails[i + 1]?.minLevel }}</div>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="navigation">
-      <a href="#" class="nav-item">← Prinplup #394</a>
-      <a href="#" class="nav-item">Starly #396 →</a>
-    </div>
+      <div class="navigation-container">
+        <div class="nav-wrapper">
+          <div class="nav-item prev" *ngIf="previousPokemon">
+            <div class="arrow">←</div>
+            <img [src]="previousPokemon?.sprites?.front_default" [alt]="previousPokemon?.name">
+            <span class="nav-text">
+              <span class="name">{{ previousPokemon?.name }}</span>
+              <span class="number">#{{ previousPokemon?.id }}</span>
+            </span>
+          </div>
+          <div class="nav-item next" *ngIf="nextPokemon">
+            <div class="arrow">→</div>
+            <span class="nav-text">
+              <span class="name">{{ nextPokemon?.name }}</span>
+              <span class="number">#{{ nextPokemon?.id }}</span>
+            </span>
+            <img [src]="nextPokemon?.sprites?.front_default" [alt]="nextPokemon?.name">
+          </div>
+        </div>
+      </div>
   </div>
 </app-drawer>

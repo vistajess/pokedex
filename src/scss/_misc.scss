@@ -1,0 +1,13 @@
+.bg-image {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  background-image: url("../assets/images/pokemon-background.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: repeat;
+  opacity: 0.4;
+}

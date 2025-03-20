@@ -7,7 +7,7 @@ import { PokemonCardModule } from 'src/app/shared/component/pokemon-card/pokemon
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
-import { DetailDrawerModule } from '../detail-drawer/detail-drawer.module';
+import { DetailDrawerModule } from './components/detail-drawer/detail-drawer.module';
 
 @NgModule({
   declarations: [
