@@ -1,43 +1,33 @@
 /* You can add global styles to this file, and also import other style files */
-/* Import Poppins font */
+/* Import Poppins font from Google Fonts for consistent typography */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+/* Import Angular CDK overlay styles for consistent overlay behavior */
 @import "@angular/cdk/overlay-prebuilt.css";
 
-@import "./scss/material";
-@import "./scss/utils";
-@import "./scss/responsive";
-@import "./scss/variables";
-@import "./scss/theme";
-@import "./scss/loader-spinner";
-@import "./scss/pokemon-types";
-@import "./scss/button";
-@import "./scss/progress-bar";
-@import "./scss/virtual-grid-list";
+/* Import various SCSS files for modular styling */
+@import "./scss/material"; // Material design styles for UI components
+@import "./scss/utils"; // Utility classes for common styles and helpers
+@import "./scss/responsive"; // Styles to ensure responsiveness across devices
+@import "./scss/variables"; // SCSS variables for colors, fonts, and other constants
+@import "./scss/theme"; // Theme styles to manage overall application aesthetics
+@import "./scss/loader-spinner"; // Styles for loading spinners used in the app
+@import "./scss/pokemon-types"; // Specific styles related to Pokémon type representations
+@import "./scss/button"; // Button styles for consistent button appearance
+@import "./scss/progress-bar"; // Progress bar styles for visual feedback on tasks
+@import "./scss/virtual-grid-list"; // Styles for virtual scrolling grid lists
+@import "./scss/misc"; // Miscellaneous styles that don't fit into other categories
 
+/* Global styles applied to all elements */
 * {
   box-sizing: border-box;
-  margin: 0;
+  margin: 0; 
   padding: 0;
 }
 
+/* Styles for the html and body elements */
 html,
 body {
-  height: 100%;
+  height: 100%; 
   margin: 0;
   font-family: "Poppins", sans-serif;
-  background-color: #f5f5f5;
-}
-
-.bg-image {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  background-image: url("assets/images/pokemon-background.jpeg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: repeat;
-  opacity: 0.4;
 }

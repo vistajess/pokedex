@@ -16,6 +16,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   searchControl = new FormControl('');
 
+  aiAssistControl = new FormControl(false);
+
   private _destroy$ = new Subject<void>();
 
   @Output() onSearchChanged = new EventEmitter<PokemonFilters>();
@@ -46,6 +48,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   async interpretDescription() {
-    this.store.dispatch(new OpenAISearchPokemon({ search: this.searchControl.value }));
+    if (this.aiAssistControl.value) {
+      this.store.dispatch(new OpenAISearchPokemon({ search: this.searchControl.value }));
+      // OpenAI assist logic
+    } else {
+      // Normal search logic
+      this.store.dispatch(new SetFilters({
+        type: null,
+        heightCategory: null,
+        search: [this.searchControl.value],
+        stats: { hp: 0, attack: 0, defense: 0, speed: 0 }
+      } ));
+    }
   }
 }

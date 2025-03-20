@@ -7,7 +7,7 @@
 // For development purposes, it is stored in environment.ts
 export const environment = {
   production: false,
-  OPENAI_API_KEY: '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'
+  OPENAI_API_KEY: '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'
 };
 
 /*

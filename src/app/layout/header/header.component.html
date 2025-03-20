@@ -12,13 +12,24 @@
     />
   </div>
   <div class="search-container">
-    <input
-      type="text"
-      class="search-input"
-      placeholder="Search here..."
-      [formControl]="searchControl"
-      (keyup.enter)="interpretDescription()"
-    />
+    <label class="toggle-switch">
+      <input type="checkbox" [formControl]="aiAssistControl">
+      <span class="slider">
+        <span class="indicator">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="12" height="12">
+            <path d="M12 2a7 7 0 0 1 7 7 1 1 0 0 1-2 0 5 5 0 0 0-10 0 1 1 0 0 1-2 0 7 7 0 0 1 7-7zM3.22 8.22a.75.75 0 1 1 1.06 1.06A9.003 9.003 0 0 0 11 21v1.25a.75.75 0 0 1-1.5 0V21a9.003 9.003 0 0 0-6.28-11.72z"></path>
+          </svg>
+        </span>
+      </span>
+      <span class="toggle-label">AI Assist</span>
+    </label>
+      <input
+        type="text"
+        class="search-input"
+        [placeholder]="aiAssistControl.value ? 'Describe the Pokemon...' : 'Search Pokemon...'"
+        [formControl]="searchControl"
+        (keyup.enter)="interpretDescription()"
+      />
     <button class="search-button" (click)="interpretDescription()">
       <svg
         class="search-icon"
