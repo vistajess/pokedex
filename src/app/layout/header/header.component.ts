@@ -5,7 +5,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { OpenAISearchPokemon, SetFilters } from 'src/app/core/data/pokemon';
 import { PokemonFilters } from 'src/app/core/data/pokemon/types/pokemon-filters';
 import { FilterService } from 'src/app/core/services/filter.service';
-import { OPENAI_NO_RESULTS_PROMPT, OpenAIService } from 'src/app/core/services/openai.service';
+import { OpenAIService } from 'src/app/core/services/openai.service';
 
 @Component({
   selector: 'app-header',
