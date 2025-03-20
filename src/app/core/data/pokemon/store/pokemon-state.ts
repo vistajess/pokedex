@@ -79,13 +79,13 @@ export class PokemonState {
     const { search } = payload;
 
     try {
-      const openAIResponse = await this.openaiService.interpretDescription(search);
-      if (openAIResponse === OPENAI_NO_RESULTS_PROMPT) {
+      let openAIResponse: any = await this.openaiService.interpretDescription(search).toPromise();
+      if (openAIResponse.result === OPENAI_NO_RESULTS_PROMPT) {
         ctx.patchState({ isLoading: false, filters: { ...filters, search: [...search] } });
         return;
       } else {
-        const arrayOfPokemonNames = openAIResponse.split(',');
-        ctx.dispatch(new OpenAISearchPokemonSuccess({ search: arrayOfPokemonNames }));
+        const arrayOfPokemonNames = openAIResponse.result?.split(',');
+        ctx.dispatch(new OpenAISearchPokemonSuccess({ search: arrayOfPokemonNames.map((name: string) => name.trim()) }));
       }
     } catch (error: any) {
       ctx.dispatch(new OpenAISearchPokemonFailure({ error: error }));

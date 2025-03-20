@@ -1,0 +1,1 @@
+export const FIREBASE_FUNCTIONS_URL = 'https://us-central1-jevi-pokedex.cloudfunctions.net/api';

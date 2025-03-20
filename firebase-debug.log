@@ -1,0 +1,78 @@
+[debug] [2025-03-20T19:06:30.804Z] ----------------------------------------------------------------------
+[debug] [2025-03-20T19:06:30.806Z] Command:       C:\nvm4w\nodejs\node.exe C:\nvm4w\nodejs\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions
+[debug] [2025-03-20T19:06:30.807Z] CLI Version:   13.34.0
+[debug] [2025-03-20T19:06:30.807Z] Platform:      win32
+[debug] [2025-03-20T19:06:30.807Z] Node Version:  v18.20.7
+[debug] [2025-03-20T19:06:30.808Z] Time:          Fri Mar 21 2025 03:06:30 GMT+0800 (Philippine Standard Time)
+[debug] [2025-03-20T19:06:30.808Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-03-20T19:06:31.017Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-03-20T19:06:31.018Z] > authorizing via signed-in user (vistajesus8@gmail.com)
+[debug] [2025-03-20T19:06:31.018Z] [iam] checking project jevi-pokedex for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2025-03-20T19:06:31.019Z] Checked if tokens are valid: true, expires at: 1742500006266
+[debug] [2025-03-20T19:06:31.019Z] Checked if tokens are valid: true, expires at: 1742500006266
+[debug] [2025-03-20T19:06:31.021Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/jevi-pokedex:testIamPermissions [none]
+[debug] [2025-03-20T19:06:31.021Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/jevi-pokedex:testIamPermissions x-goog-quota-user=projects/jevi-pokedex
+[debug] [2025-03-20T19:06:31.021Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/jevi-pokedex:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-03-20T19:06:32.004Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/jevi-pokedex:testIamPermissions 200
+[debug] [2025-03-20T19:06:32.004Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/jevi-pokedex:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2025-03-20T19:06:32.004Z] Checked if tokens are valid: true, expires at: 1742500006266
+[debug] [2025-03-20T19:06:32.004Z] Checked if tokens are valid: true, expires at: 1742500006266
+[debug] [2025-03-20T19:06:32.004Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/jevi-pokedex/serviceAccounts/jevi-pokedex@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2025-03-20T19:06:32.004Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/jevi-pokedex/serviceAccounts/jevi-pokedex@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-03-20T19:06:32.414Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/jevi-pokedex/serviceAccounts/jevi-pokedex@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2025-03-20T19:06:32.414Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/jevi-pokedex/serviceAccounts/jevi-pokedex@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[info] 
+[info] === Deploying to 'jevi-pokedex'...
+[info] 
+[info] i  deploying functions 
+[info] Running command: npm --prefix "$RESOURCE_DIR" run build
+[info] +  functions: Finished running predeploy script. 
+[debug] [2025-03-20T19:06:41.851Z] Checked if tokens are valid: true, expires at: 1742500006266
+[debug] [2025-03-20T19:06:41.851Z] Checked if tokens are valid: true, expires at: 1742500006266
+[debug] [2025-03-20T19:06:41.851Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/jevi-pokedex [none]
+[debug] [2025-03-20T19:06:42.798Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/jevi-pokedex 200
+[debug] [2025-03-20T19:06:42.798Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/jevi-pokedex {"projectNumber":"315252526777","projectId":"jevi-pokedex","lifecycleState":"ACTIVE","name":"jevi-pokedex","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-03-18T10:22:53.399421Z"}
+[info] i  functions: preparing codebase default for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[debug] [2025-03-20T19:06:42.800Z] Checked if tokens are valid: true, expires at: 1742500006266
+[debug] [2025-03-20T19:06:42.800Z] Checked if tokens are valid: true, expires at: 1742500006266
+[debug] [2025-03-20T19:06:42.800Z] Checked if tokens are valid: true, expires at: 1742500006266
+[debug] [2025-03-20T19:06:42.801Z] Checked if tokens are valid: true, expires at: 1742500006266
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[debug] [2025-03-20T19:06:42.801Z] Checked if tokens are valid: true, expires at: 1742500006266
+[debug] [2025-03-20T19:06:42.801Z] Checked if tokens are valid: true, expires at: 1742500006266
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2025-03-20T19:06:42.802Z] Checked if tokens are valid: true, expires at: 1742500006266
+[debug] [2025-03-20T19:06:42.802Z] Checked if tokens are valid: true, expires at: 1742500006266
+[debug] [2025-03-20T19:06:42.802Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/cloudfunctions.googleapis.com [none]
+[debug] [2025-03-20T19:06:42.802Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/cloudfunctions.googleapis.com x-goog-quota-user=projects/jevi-pokedex
+[debug] [2025-03-20T19:06:42.803Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/runtimeconfig.googleapis.com [none]
+[debug] [2025-03-20T19:06:42.804Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/runtimeconfig.googleapis.com x-goog-quota-user=projects/jevi-pokedex
+[debug] [2025-03-20T19:06:42.804Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/cloudbuild.googleapis.com [none]
+[debug] [2025-03-20T19:06:42.804Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/cloudbuild.googleapis.com x-goog-quota-user=projects/jevi-pokedex
+[debug] [2025-03-20T19:06:42.805Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/artifactregistry.googleapis.com [none]
+[debug] [2025-03-20T19:06:42.805Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/artifactregistry.googleapis.com x-goog-quota-user=projects/jevi-pokedex
+[debug] [2025-03-20T19:06:44.095Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/runtimeconfig.googleapis.com 200
+[debug] [2025-03-20T19:06:44.095Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/runtimeconfig.googleapis.com [omitted]
+[debug] [2025-03-20T19:06:44.102Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/cloudfunctions.googleapis.com 200
+[debug] [2025-03-20T19:06:44.102Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/cloudfunctions.googleapis.com [omitted]
+[info] +  functions: required API cloudfunctions.googleapis.com is enabled 
+[debug] [2025-03-20T19:06:44.132Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/cloudbuild.googleapis.com 200
+[debug] [2025-03-20T19:06:44.133Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/cloudbuild.googleapis.com [omitted]
+[warn] !  functions: missing required API cloudbuild.googleapis.com. Enabling now... 
+[debug] [2025-03-20T19:06:44.133Z] Checked if tokens are valid: true, expires at: 1742500006266
+[debug] [2025-03-20T19:06:44.133Z] Checked if tokens are valid: true, expires at: 1742500006266
+[debug] [2025-03-20T19:06:44.134Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/cloudbuild.googleapis.com:enable [none]
+[debug] [2025-03-20T19:06:44.134Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/cloudbuild.googleapis.com:enable x-goog-quota-user=projects/jevi-pokedex
+[debug] [2025-03-20T19:06:44.146Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/artifactregistry.googleapis.com 200
+[debug] [2025-03-20T19:06:44.146Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/artifactregistry.googleapis.com [omitted]
+[warn] !  artifactregistry: missing required API artifactregistry.googleapis.com. Enabling now... 
+[debug] [2025-03-20T19:06:44.147Z] Checked if tokens are valid: true, expires at: 1742500006266
+[debug] [2025-03-20T19:06:44.147Z] Checked if tokens are valid: true, expires at: 1742500006266
+[debug] [2025-03-20T19:06:44.147Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/artifactregistry.googleapis.com:enable [none]
+[debug] [2025-03-20T19:06:44.147Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/artifactregistry.googleapis.com:enable x-goog-quota-user=projects/jevi-pokedex
+[debug] [2025-03-20T19:06:45.579Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/cloudbuild.googleapis.com:enable 200
+[debug] [2025-03-20T19:06:45.579Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/cloudbuild.googleapis.com:enable [omitted]
+[debug] [2025-03-20T19:06:45.603Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/artifactregistry.googleapis.com:enable 200
+[debug] [2025-03-20T19:06:45.604Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/jevi-pokedex/services/artifactregistry.googleapis.com:enable [omitted]
