@@ -49,8 +49,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   async interpretDescription() {
     if (this.aiAssistControl.value) {
-      this.store.dispatch(new OpenAISearchPokemon({ search: this.searchControl.value }));
       // OpenAI assist logic
+      this.store.dispatch(new OpenAISearchPokemon({ search: this.searchControl.value }));
     } else {
       // Normal search logic
       this.store.dispatch(new SetFilters({

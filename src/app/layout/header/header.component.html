@@ -26,7 +26,7 @@
       <input
         type="text"
         class="search-input"
-        [placeholder]="aiAssistControl.value ? 'Describe the Pokemon...' : 'Search Pokemon...'"
+        [placeholder]="aiAssistControl.value ? 'Describe the Pokemon...' : 'Search Pokemon, enter name eg. pikachu...'"
         [formControl]="searchControl"
         (keyup.enter)="interpretDescription()"
       />
