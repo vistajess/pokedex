@@ -1,3 +1,76 @@
+# Pokédex App
+
+A modern Pokédex application built with Angular, featuring advanced caching, dynamic forms, batch loading techniques, and AI-powered features.
+
+## ✨ Features
+
+- 🔍 **Advanced Pokémon Search & Filtering**
+  - Dynamic form-based search with multiple criteria
+  - Real-time filtering capabilities
+  - Natural language search powered by OpenAI
+
+- 💨 **Performance Optimizations**
+  - Smart caching with TanStack Query
+  - Batch loading technique for efficient data fetching
+  - Lazy loading of components and routes
+  - Preloading of commonly accessed data
+
+- 🎨 **Modern UI/UX**
+  - Responsive Material Design
+  - Smooth animations and transitions
+  - Intuitive navigation
+
+## 🛠️ Tech Stack
+
+- **Frontend Framework**: Angular 13+
+- **UI Library**: Angular Material
+- **State Management**: TanStack Query (formerly React Query)
+- **API Integration**: 
+  - PokéAPI (pokeapi.co)
+  - OpenAI GPT-4 API
+- **Form Handling**: Dynamic Forms with Angular Reactive Forms
+- **Styling**: SCSS with modern CSS features
+- **Development**: Docker support for consistent environments
+- **AI Features**: OpenAI API integration
+- **Analytics**: Google Analytics integration
+- **PWA Support**: Service Workers for offline functionality
+
+## 🏗️ Architecture
+
+- **Dynamic Forms**: Reusable form components that adapt to different search criteria
+- **Caching Layer**: 
+  - Intelligent caching with TanStack Query
+  - IndexedDB for offline data persistence
+- **Batch Loading**: Smart loading strategy to fetch Pokémon data in optimized batches
+- **Modular Design**: Feature-based module organization for better code maintainability
+
+## 💻 Development
+
+### Prerequisites
+- Node.js 14+
+- npm 6+
+- Angular CLI 13+
+- OpenAI API key
+
+### Local Development
+```bash
+npm install
+npm start
+```
+Navigate to `http://localhost:4200/`
+
+### Build for Production
+```bash
+npm run build
+```
+
+### Running Tests
+```bash
+npm test
+```
+
+## 🐳 Docker Setup
+
 # Angular(v13) Material Boilerplate
 
 This boilerplate will help you to setup your angular application quickly and can start adding your components easily.
@@ -28,7 +101,6 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
-
 
 
 
@@ -102,3 +174,20 @@ docker system prune -f
 For production, consider adding:
 - A multi-stage build for optimized images
 - A dedicated `ng build` command for generating static assets
+
+## 📚 API Documentation
+The application uses the [PokéAPI](https://pokeapi.co/) for fetching Pokémon 
+data. :
+
+### PokéAPI Endpoints
+- `/pokemon`: List and search Pokémon
+- `/pokemon/{id}`: Get detailed Pokémon information
+- `/type`: Get Pokémon types
+- `/ability`: Get Pokémon abilities
+
+### OpenAI Integration
+- Model: GPT-4
+- Endpoints:
+  - `/completions`: Natural language processing
+- Features:
+  - Interpretting and return pokemon based on description
