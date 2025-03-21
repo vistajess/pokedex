@@ -69,8 +69,6 @@ npm run build
 npm test
 ```
 
-## 🐳 Docker Setup
-
 # Angular(v13) Material Boilerplate
 
 This boilerplate will help you to setup your angular application quickly and can start adding your components easily.
