@@ -1,9 +1,18 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { BehaviorSubject, finalize, forkJoin, map, take, Observable, Subject, switchMap, takeUntil, firstValueFrom, tap } from 'rxjs';
+import { BehaviorSubject, finalize, forkJoin, map, Observable, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { PokemonSelectors, PokemonService } from 'src/app/core/data/pokemon';
-import { AbilityDetail, Pokemon, PokemonAbility, PokemonDetail, PokemonSpeciesDetail } from 'src/app/core/types';
+import { AbilityDetail, PokemonDetail, PokemonSpeciesDetail } from 'src/app/core/types';
 import { EvolutionChain, EvolutionDetail } from 'src/app/core/types/evolution';
+
+/**
+ * DetailDrawerComponent handles the display of detailed Pokemon information in a side drawer.
+ * Features:
+ * - Displays Pokemon species info, evolution chain, and abilities
+ * - Keyboard navigation (left/right arrows) between Pokemon
+ * - Loading states and error handling
+ * - Concurrent data fetching for abilities
+ */
 @Component({
   selector: 'pokemon-detail-drawer',
   templateUrl: './detail-drawer.component.html',
@@ -42,6 +51,25 @@ export class DetailDrawerComponent implements OnInit, OnDestroy {
     }
   }
   private _details: PokemonDetail | null = null; // Holds the Pokémon detail object.
+
+  /**
+   * Keyboard event handler for navigating between Pokemon
+   * - Left Arrow: Show previous Pokemon
+   * - Right Arrow: Show next Pokemon
+   * Only active when drawer is open
+   */
+  @HostListener('window:keydown', ['$event'])
+  handleKeyDown(event: KeyboardEvent) {
+    switch (event.key) {
+      case 'ArrowLeft':
+        this.handlePreviousPokemon();
+        break;
+      case 'ArrowRight':
+        
+        this.handleNextPokemon();
+        break;
+    }
+  }
 
   constructor(
     private pokemonService: PokemonService, 
@@ -104,14 +132,22 @@ export class DetailDrawerComponent implements OnInit, OnDestroy {
     this.nextPokemon = this.getNextPokemon(value);
     this.previousPokemon = this.getPreviousPokemon(value);
 
-    console.log(this.nextPokemon, this.previousPokemon);
   }
 
+  /**
+   * Handles navigation to the next Pokemon in the Pokedex
+   * Retrieves the Pokemon with ID + 1 from the store
+   */
   getNextPokemon(currentPokemon: PokemonDetail): PokemonDetail | null {
     return this.store.selectSnapshot(PokemonSelectors.pokemons)
       .find((p) => p.details?.id === currentPokemon?.id + 1)?.details || null;
   }
 
+  /**
+   * Handles navigation to the previous Pokemon in the Pokedex
+   * Retrieves the Pokemon with ID - 1 from the store
+   * Returns null if current Pokemon is #1
+   */
   getPreviousPokemon(currentPokemon: PokemonDetail): PokemonDetail | null {
     if (currentPokemon?.id === 1) return null;
 
@@ -120,10 +156,9 @@ export class DetailDrawerComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Constructs the evolution chain details from the provided evolution chain.
-   * Maps Pokémon names to their details and minimum evolution levels.
-   * @param evolutionChain - An array of Pokémon evolution details.
-   * @returns An array of objects containing Pokémon details and their minimum evolution levels.
+   * Maps evolution chain data to Pokemon details from the store
+   * Combines evolution level requirements with Pokemon data
+   * @returns Array of {details, minLevel} objects for the evolution chain
    */
   buildEvolutionChain(evolutionChain: { name: string, minLevel: number }[]): any[] {
     const findPokemon = this.store.selectSnapshot(PokemonSelectors.pokemons);
@@ -137,56 +172,49 @@ export class DetailDrawerComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Retrieves the effect of an ability in English from its effect entries.
-   * @param ability - The ability object containing effect entries.
-   * @returns The effect description in English.
+   * Extracts English ability description from effect entries
+   * @returns English effect description string
    */
   getEnglishAffectEntries(ability: any): string {
     return ability.effect_entries.find((entry: any) => entry.language.name === 'en').effect;
   }
 
   /**
-   * Retrieves the flavor text of a Pokémon species in English from its flavor text entries.
-   * If no English flavor text is found, returns a placeholder description.
-   * @param speciesDetails - The species details object containing flavor text entries.
-   * @returns The flavor text description in English or a placeholder if not found.
+   * Extracts English flavor text from species details
+   * @returns Pokemon description in English or placeholder
    */
   getEnglishSpeciesDetails(speciesDetails: any): string {
     return speciesDetails.flavor_text_entries.find((entry: any) => entry.language.name === 'en').flavor_text || 'This is placeholder for pokemon description';
   }
 
   /**
-   * Retrieves the genus of a Pokémon species in English from its genera entries.
-   * @param speciesDetails - The species details object containing genera entries.
-   * @returns The genus description in English.
+   * Extracts English genus (category) from species details
+   * Example: "Seed Pokemon", "Flame Pokemon"
    */
   getGenera(speciesDetails: any): string {
     return speciesDetails.genera.find((genus: any) => genus.language.name === 'en').genus; 
   }
 
   /**
-   * Converts height from decimeters to meters and returns it as a string.
-   * @param height - The height in decimeters (default is 0).
-   * @returns The height in meters as a string.
+   * Converts Pokemon height from decimeters to meters
+   * @returns Formatted height string with 'm' suffix
    */
   getHeight(height: number = 0): string {
     return (height / 10).toString() + 'm';
   }
 
   /**
-   * Converts weight from hectograms to kilograms and returns it as a string.
-   * @param weight - The weight in hectograms (default is 0).
-   * @returns The weight in kilograms as a string.
+   * Converts Pokemon weight from hectograms to kilograms
+   * @returns Formatted weight string with 'kg' suffix
    */
   getWeight(weight: number = 0): string {
     return (weight / 10).toString() + 'kg';
   }
 
   /**
-   * Extracts the evolution chain details from the provided evolution chain object.
-   * Recursively traverses the chain to build an array of Pokémon names and their minimum levels.
-   * @param evolutionChain - The evolution chain object to traverse.
-   * @returns An array of objects containing Pokémon names and their minimum evolution levels.
+   * Recursively builds a flat array of Pokemon evolution stages
+   * Each entry contains the Pokemon name and minimum level required to evolve
+   * @returns Array of evolution chain entries in order of evolution
    */
   getEvolutionChain(evolutionChain: EvolutionChain): { name: string, minLevel: number }[] {
     const evolutionChainDetailsArr: { name: string, minLevel: number }[] = []; // Array to hold evolution chain details.
@@ -202,6 +230,40 @@ export class DetailDrawerComponent implements OnInit, OnDestroy {
     traverseChain(evolutionChain.chain); // Start traversing the evolution chain.
 
     return evolutionChainDetailsArr; // Return the completed evolution chain details array.
+  }
+
+  /**
+   * Navigates to the next Pokemon if available and drawer is open
+   * Triggers a full data refresh for the new Pokemon
+   */
+  handleNextPokemon() {
+    if (this.nextPokemon && this.isDrawerOpen) {
+      this.details = this.nextPokemon;
+      this.getPokemonDetails(this.details);
+    }
+  }
+
+  /**
+   * Navigates to the previous Pokemon if available and drawer is open
+   * Triggers a full data refresh for the new Pokemon
+   */
+  handlePreviousPokemon() {
+    if (this.previousPokemon && this.isDrawerOpen) {
+      this.details = this.previousPokemon;
+      this.getPokemonDetails(this.details);
+    }
+  }
+
+  /**
+   * Resets component state when drawer is closed
+   * Clears current Pokemon details and navigation references
+   * Emits drawerClosed event
+   */
+  handleDrawerClosed() {
+    this.details = null;
+    this.previousPokemon = null;
+    this.nextPokemon = null;
+    this.drawerClosed.emit();
   }
 
 }

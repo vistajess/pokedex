@@ -138,14 +138,16 @@
 
 .stats-bars {
   display: grid;
-  grid-template-columns: auto 1fr 30px;
+  grid-template-columns: auto 1fr 30px 1fr 1fr 30px;
   gap: 16px;
   margin-bottom: 20px;
+  align-items: center;
 }
 
 .stat-bar-label {
   font-size: 13px;
   color: #666;
+  text-transform: capitalize;
 }
 
 .stat-bar {
