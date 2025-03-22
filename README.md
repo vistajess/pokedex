@@ -32,8 +32,6 @@ A modern Pokédex application built with Angular, featuring advanced caching, dy
 - **Styling**: SCSS with modern CSS features
 - **Development**: Docker support for consistent environments
 - **AI Features**: OpenAI API integration
-- **Analytics**: Google Analytics integration
-- **PWA Support**: Service Workers for offline functionality
 
 ## 🏗️ Architecture
 
