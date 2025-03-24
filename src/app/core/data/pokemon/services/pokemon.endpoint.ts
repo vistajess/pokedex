@@ -59,7 +59,7 @@ export class PokemonService {
     return from(
       this.queryClient.fetchQuery({
         queryKey: ['pokemonDetails', nameOrId],
-        queryFn: () => this.http.get<Pokemon>(`${this.baseUrl}${POKEMON_API.ENDPOINTS.POKEMON}/${nameOrId}`).toPromise(),
+        queryFn: () => this.http.get<Pokemon>(`${this.baseUrl}${POKEMON_API.ENDPOINTS.POKEMON}/${nameOrId}`).toPromise()
       })
     ).pipe(
       map(pokemon => {

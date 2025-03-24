@@ -92,6 +92,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.pokemonHashMap.clear();
     this.destroy$.next(); // Emit value to complete the observable
     this.destroy$.complete(); // Complete the subject
   }
