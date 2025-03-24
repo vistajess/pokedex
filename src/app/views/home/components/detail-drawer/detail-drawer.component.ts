@@ -65,16 +65,15 @@ export class DetailDrawerComponent implements OnInit, OnDestroy {
         this.handlePreviousPokemon();
         break;
       case 'ArrowRight':
-        
         this.handleNextPokemon();
         break;
     }
   }
 
   constructor(
-    private pokemonService: PokemonService, 
+    private pokemonService: PokemonService,
     private store: Store
-  ) {}
+  ) { }
 
   ///
   /// life cycle hooks
@@ -117,15 +116,12 @@ export class DetailDrawerComponent implements OnInit, OnDestroy {
       );
 
     // Fetch abilities concurrently
-    const fetchAbility1$ = this.pokemonService.getPokemonAbilityByUrl(value?.abilities[0].ability.url);
-    const fetchAbility2$ = this.pokemonService.getPokemonAbilityByUrl(value?.abilities[1].ability.url);
-    forkJoin([
-      fetchAbility1$, 
-      fetchAbility2$
-    ]).pipe(
+
+    const abilities$ = value?.abilities.map((ability: any) => this.pokemonService.getPokemonAbilityByUrl(ability.ability.url));
+    forkJoin(abilities$).pipe(
       takeUntil(this._destroy$)
-    ).subscribe(([ability1, ability2]) => {
-      this.abilities = [ability1, ability2]; 
+    ).subscribe((abilities) => {
+      this.abilities = abilities;
       this.selectedAbility = this.abilities[0];
     });
 
@@ -162,7 +158,7 @@ export class DetailDrawerComponent implements OnInit, OnDestroy {
    */
   buildEvolutionChain(evolutionChain: { name: string, minLevel: number }[]): any[] {
     const findPokemon = this.store.selectSnapshot(PokemonSelectors.pokemons);
-    
+
     return evolutionChain.map((pokemonChain) => {
       return {
         details: findPokemon.find((p) => p.name === pokemonChain.name)?.details, // Find Pokémon details by name.
@@ -192,7 +188,7 @@ export class DetailDrawerComponent implements OnInit, OnDestroy {
    * Example: "Seed Pokemon", "Flame Pokemon"
    */
   getGenera(speciesDetails: any): string {
-    return speciesDetails.genera.find((genus: any) => genus.language.name === 'en').genus; 
+    return speciesDetails.genera.find((genus: any) => genus.language.name === 'en').genus;
   }
 
   /**
@@ -220,7 +216,7 @@ export class DetailDrawerComponent implements OnInit, OnDestroy {
     const evolutionChainDetailsArr: { name: string, minLevel: number }[] = []; // Array to hold evolution chain details.
 
     const traverseChain = (chain: EvolutionDetail) => {
-      evolutionChainDetailsArr.push({ 
+      evolutionChainDetailsArr.push({
         name: chain.species.name, // Add the Pokémon name to the array.
         minLevel: chain.evolution_details.length > 0 ? chain.evolution_details[0].min_level || 0 : 0 // Get the minimum level for evolution.
       });

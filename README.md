@@ -124,7 +124,7 @@ docker build -t pokedex .
 To start the Angular development server, run:
 
 ```sh
-docker run -p 4200:4200 -v D:/Projects/pokedex:/app -v /app/node_modules --name pokedex-container --rm pokedex
+docker run -p 3000:4200 -v D:/Projects/pokedex:/app -v /app/node_modules --name pokedex-container --rm pokedex
 ```
 
 ### Explanation
