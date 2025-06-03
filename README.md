@@ -8,6 +8,7 @@ A modern Pokédex application built with Angular, featuring advanced caching, dy
   - Dynamic form-based search with multiple criteria
   - Real-time filtering capabilities
   - Natural language search powered by OpenAI
+  - token based, limited search due to free-tier account
 
 - 💨 **Performance Optimizations**
   - Smart caching with TanStack Query
