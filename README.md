@@ -26,9 +26,9 @@ A modern Pokédex application built with Angular, featuring advanced caching, dy
 - **Frontend Framework**: Angular 13+
 - **UI Library**: Angular Material
 - **State Management**: TanStack Query (formerly React Query)
-- **API Integration**: 
-  - PokéAPI (pokeapi.co)
-  - OpenAI GPT-4 API
+- **API Integration**:
+  - [PokéAPI](https://pokeapi.co) — Open source RESTful Pokémon data API
+  - [OpenAI GPT-4 API](https://platform.openai.com/)
 - **Form Handling**: Dynamic Forms with Angular Reactive Forms
 - **Styling**: SCSS with modern CSS features
 - **Development**: Docker support for consistent environments
